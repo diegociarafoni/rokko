@@ -1,6 +1,7 @@
 version: 2
-# Una sola PR a settimana per ecosistema (gruppi). Gli avvisi di sicurezza non
-# sono nei gruppi: restano PR separate e immediate.
+# Di norma una sola PR a settimana per ecosistema (gruppi con tutti i salti di
+# versione). Senza applies-to i gruppi valgono solo per gli aggiornamenti di
+# versione: gli avvisi di sicurezza restano PR separate e immediate.
 # cooldown: si propongono solo versioni pubblicate da almeno 7 giorni, per non
 # installare un pacchetto compromesso nelle ore prima che venga ritirato.
 updates:
