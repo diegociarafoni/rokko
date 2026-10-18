@@ -449,8 +449,8 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   /// Partita con l'istruttore: aiuti accesi e commento sull'apertura.
   bool get _instructor => widget.challenge?.instructor ?? false;
 
-  /// Allenamento (RF-22) contro i bot: aiuti, ma niente Elo né vittorie. Fuori dall'Allenamento è Sfida. Il profilo bambino si allena
-  /// sempre.
+  /// Allenamento (RF-22) contro i bot: aiuti, ma niente Elo né vittorie. Fuori
+  /// dall'Allenamento è Sfida. Il profilo bambino si allena sempre.
   bool _training = false;
 
   bool get _trainingDefault => _settings.kidMode || _settings.trainingMode;

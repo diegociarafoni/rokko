@@ -230,4 +230,4 @@ Contro un bot o il computer si gioca in due modalità, scelte con l'interruttore
 | Elo | non conta | conta |
 | Vittorie nei progressi e nei badge | non contano: la partita vale come giocata (XP di partecipazione) | contano |
 
-Il profilo bambino gioca sempre in Allenamento e non mostra l'interruttore. La modalità vale per la partita in corso (`_training` in `GamePage`); riprendendo una partita salvata vale l'ultima scelta fatta. Tra due persone e nelle sfide del percorso non cambia nulla.
+Annullare dopo la fine di una partita che conta riapre la partita, ma per vittorie e Elo vale il primo esito registrato; nei tornei e nelle sfide vale l'esito finale. Il profilo bambino gioca sempre in Allenamento e non mostra l'interruttore. La modalità vale per la partita in corso (`_training` in `GamePage`); riprendendo una partita salvata vale l'ultima scelta fatta. Tra due persone e nelle sfide del percorso non cambia nulla.

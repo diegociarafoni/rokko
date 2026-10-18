@@ -149,7 +149,7 @@ Testo di ogni requisito, formulato come funzione di Rokko. La colonna Stato dice
 | RF-20 | Scelta del colore (bianco, nero, casuale) e del livello di forza su una scala chiara (es. 1-10 o Elo indicativo 400-2800), ottenuta limitando profondità, tempo e `Skill Level` di Stockfish. | fatta |
 | RF-21 | Il motore gira in un thread o isolate separato per non bloccare l'interfaccia; tempo di riflessione percepito realistico ai livelli bassi (ritardo artificiale). | fatta |
 | RF-26 (P1) | Avversario adattivo: il livello si regola partita dopo partita per mantenere circa il 50% di vittorie, senza che l'utente debba scegliere un numero. | fatta |
-| RF-22 | Modalità "Allenamento" con aiuti attivabili: suggerimento della mossa, annullamento illimitato, barra di valutazione, minacce. Modalità "Sfida" senza aiuti. | vedi A-3 |
+| RF-22 | Modalità "Allenamento" con aiuti attivabili: suggerimento della mossa, barra di valutazione, minacce. Modalità "Sfida" senza aiuti. L'annullamento è sempre disponibile. | vedi A-3 |
 | RF-23 (P1) | Bot con personalità: nome, avatar, Elo, stile (aggressivo, posizionale, amante dei gambetti), apertura preferita e brevi frasi a reazione degli eventi (scacco, cattura, errore). Lo stile si ottiene con libro d'apertura dedicato e regole di scelta tra le prime N mosse del motore. | fatta |
 | RF-24 (P1) | Partenza da una posizione personalizzata (FEN o editor di posizione) contro il motore. | fatta |
 | RF-27 (P1) | Partite a handicap contro il computer, i bot e nella partita a due: senza un pezzo scelto (pedone f, cavallo, torre, donna) o con tempo diverso per i due giocatori. L'handicap è registrato nel PGN e la partita non conta per il rating locale. | fatta |
