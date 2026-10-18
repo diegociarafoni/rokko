@@ -143,7 +143,7 @@
   "botOptionsCoach": "Pelatih",
   "botOptionsCoachHint": "Memperingatkanmu saat kamu membuat kesalahan.",
   "botOptionsTraining": "Latihan",
-  "botOptionsTrainingHint": "Batalkan, petunjuk, dan ancaman. Tidak dihitung untuk Elo dan kemenangan; mati berarti Tantangan, tanpa bantuan.",
+  "botOptionsTrainingHint": "Petunjuk dan ancaman. Tidak dihitung untuk Elo dan kemenangan; mati berarti Tantangan, tanpa bantuan.",
   "botOptionsSummary": "{time} · {variant}",
   "@botOptionsSummary": {
     "placeholders": {

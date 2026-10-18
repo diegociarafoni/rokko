@@ -409,7 +409,6 @@ class _HomeShellState extends State<HomeShell> {
             title: '${bot.avatar} ${bot.name}',
             levelId: bot.levelId,
             side: Side.white,
-            allowUndo: true,
             allowHints: true,
           ),
           onFinished: (r, _) => result = r,
@@ -607,7 +606,6 @@ class _HomeShellState extends State<HomeShell> {
             title: AppLocalizations.of(context).homeGuardianTitle,
             levelId: engineLevelForElo(stage.guardianElo!).id,
             side: Side.white,
-            allowUndo: true,
             allowHints: true,
           ),
           onFinished: (r, m) {
@@ -636,7 +634,6 @@ class _HomeShellState extends State<HomeShell> {
               title: request.title,
               levelId: request.levelId,
               side: request.side,
-              allowUndo: true,
               startMoves: request.startMoves,
               line: request.line,
               instructor: request.instructor,

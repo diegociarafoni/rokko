@@ -66,7 +66,6 @@ void main() {
                   title: 'Gioca con l\'istruttore',
                   levelId: 2,
                   side: Side.black,
-                  allowUndo: true,
                   startMoves: [Move.parse('e2e4')!],
                   instructor: true,
                 ),

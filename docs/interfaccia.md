@@ -44,7 +44,7 @@ Per ciascun giocatore una riga mostra le icone dei pezzi avversari catturati, da
 |---|---|
 | Altro | Apre il pannello «Partita» con Allenatore e Minaccia (e «Gira» sugli schermi stretti); non c'è dove il pannello sarebbe vuoto |
 | Nuova | Apre il foglio «Nuova partita» descritto sopra: avvio rapido, amico, galleria dei bot, istruttore, tornei e, in «Altre modalità», la partita personalizzata (avversario, variante Classica, Chess960, Re della collina o Tre scacchi, handicap, nomi e cadenza; toccando la cadenza inizia la partita) |
-| Annulla | Annulla l'ultima mossa (tra due persone sullo stesso telefono serve il consenso di chi non l'ha giocata); disattivato se non ci sono mosse |
+| Annulla | Annulla l'ultima mossa, in ogni modalità (tra due persone sullo stesso telefono serve il consenso di chi non l'ha giocata); disattivato se non ci sono mosse |
 | Gira | Capovolge la scacchiera |
 | Patta | Chiede all'avversario se accetta la patta; a partita conclusa cede il posto a Rivincita |
 | Abbandona | Chiede conferma e fa abbandonare il lato al tratto; a partita conclusa cede il posto a Rivedi |

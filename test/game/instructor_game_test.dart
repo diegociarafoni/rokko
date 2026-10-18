@@ -56,7 +56,6 @@ void main() {
             title: 'Istruttore',
             levelId: 2,
             side: Side.white,
-            allowUndo: true,
             instructor: true,
           ),
         ),

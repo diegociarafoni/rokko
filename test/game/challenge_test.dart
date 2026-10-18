@@ -38,7 +38,6 @@ void main() {
       WidgetTester tester, {
       Side side = Side.white,
       bool pushed = false,
-      bool allowUndo = false,
       bool allowHints = false,
     }) async {
       results.clear();
@@ -55,7 +54,6 @@ void main() {
           title: 'Il guardiano',
           levelId: 2,
           side: side,
-          allowUndo: allowUndo,
           allowHints: allowHints,
         ),
         onFinished: (result, _) => results.add(result),
@@ -92,7 +90,7 @@ void main() {
       expect(find.textContaining('1. '), findsOneWidget);
     });
 
-    testWidgets('non si può ricominciare né annullare', (tester) async {
+    testWidgets('non si può ricominciare', (tester) async {
       await open(tester);
       final newGame = tester.widget<InkWell>(
         find.byKey(const ValueKey('gameAction-new')),
@@ -104,7 +102,7 @@ void main() {
     testWidgets('con allowHints c\'è Suggerisci ma non l\'allenatore', (
       tester,
     ) async {
-      await open(tester, allowUndo: true, allowHints: true);
+      await open(tester, allowHints: true);
       expect(find.text('Suggerisci'), findsOneWidget);
       expect(find.byTooltip('Altre azioni'), findsNothing);
     });
@@ -135,23 +133,14 @@ void main() {
     String fen(WidgetTester tester) =>
         tester.widget<Chessboard>(find.byType(Chessboard)).controller.game.fen;
 
-    testWidgets('annulla funziona se la sfida lo consente', (tester) async {
-      await open(tester, allowUndo: true);
+    testWidgets('annulla funziona in ogni sfida', (tester) async {
+      await open(tester);
       final start = fen(tester);
       await playE4(tester);
       expect(fen(tester), isNot(start));
       await tester.tap(find.text('Annulla'));
       await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(fen(tester), start);
-    });
-
-    testWidgets('annulla non c\'è nelle sfide competitive', (tester) async {
-      await open(tester);
-      await playE4(tester);
-      final played = fen(tester);
-      await tester.tap(find.text('Annulla'), warnIfMissed: false);
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(fen(tester), played);
     });
 
     testWidgets('uscire a partita in corso chiede conferma', (tester) async {
