@@ -11,6 +11,7 @@ class GameChallenge {
     required this.levelId,
     required this.side,
     this.allowUndo = false,
+    this.allowHints = false,
     this.startMoves = const [],
     this.line,
     this.instructor = false,
@@ -28,6 +29,10 @@ class GameChallenge {
   /// Se l'annullamento è consentito: sì nell'allenamento (guardiano), no nelle
   /// partite che contano come torneo.
   final bool allowUndo;
+
+  /// Se il pulsante Suggerisci è disponibile (senza allenatore né barra di
+  /// valutazione): sì nelle sfide di allenamento, no nei tornei.
+  final bool allowHints;
 
   /// Mosse già giocate all'inizio (apertura scelta, RF-94).
   final List<Move> startMoves;

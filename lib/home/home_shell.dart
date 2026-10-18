@@ -410,6 +410,7 @@ class _HomeShellState extends State<HomeShell> {
             levelId: bot.levelId,
             side: Side.white,
             allowUndo: true,
+            allowHints: true,
           ),
           onFinished: (r, _) => result = r,
           onActivity: _record,
@@ -607,6 +608,7 @@ class _HomeShellState extends State<HomeShell> {
             levelId: engineLevelForElo(stage.guardianElo!).id,
             side: Side.white,
             allowUndo: true,
+            allowHints: true,
           ),
           onFinished: (r, m) {
             result = r;
