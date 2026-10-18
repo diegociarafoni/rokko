@@ -2,7 +2,7 @@
 
 ## Aggiornamenti
 
-[Dependabot](../.github/dependabot.yml) apre ogni settimana PR per pacchetti pub, azioni GitHub e Gradle. Gli aggiornamenti minori e di correzione dei pacchetti pub sono raggruppati in una sola PR, e così tutti quelli delle azioni GitHub, compresa l'azione locale in `.github/actions/`. I messaggi rispettano la convenzione Angular (`build(deps): …`, `ci(deps): …`) e passano gli stessi controlli di ogni altra PR.
+[Dependabot](../.github/dependabot.yml) apre ogni settimana PR per pacchetti pub, azioni GitHub e Gradle. Gli aggiornamenti sono raggruppati, di norma, in una sola PR settimanale per ecosistema (pub, azioni GitHub compresa l'azione locale in `.github/actions/`, Gradle), qualunque sia il tipo di salto. Se un salto maggiore rompe la CI, blocca l'intera PR del gruppo: va escluso o corretto a mano. Gli avvisi di sicurezza restano fuori dai gruppi (i gruppi non usano `applies-to`) e arrivano come PR separate, senza attendere la settimana. I messaggi rispettano la convenzione Angular (`build(deps): …`, `ci(deps): …`) e passano gli stessi controlli di ogni altra PR.
 
 Dependabot propone solo versioni pubblicate da almeno 7 giorni (`cooldown`): un pacchetto compromesso viene di solito scoperto e ritirato prima di allora. Gli aggiornamenti di sicurezza non hanno questa attesa. Le dipendenze Ruby di Fastlane (`Gemfile.lock`) non sono coperte da Dependabot e si aggiornano a mano.
 
