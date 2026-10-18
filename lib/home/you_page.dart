@@ -8,6 +8,8 @@ import '../archive/game_archive.dart';
 import '../archive/saved_game.dart';
 import '../badges/badges_l10n.dart';
 import '../badges/badges_page.dart';
+import '../guide/guide_host.dart';
+import '../guide/guide_steps.dart';
 import '../kids/kid_display.dart';
 import '../l10n/app_localizations.dart';
 import '../path/curriculum.dart';
@@ -160,133 +162,151 @@ class _YouPageState extends State<YouPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final w = widget;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.youTitle)),
-      body: FutureBuilder(
-        future: w.progress(),
-        builder: (context, snapshot) {
-          final controller = snapshot.data;
-          final data = <Widget>[
-            _Entry(
-              icon: Icons.person_outline,
-              title: l10n.youProfile,
-              subtitle: l10n.youProfileSubtitle,
-              onTap: () => _open(
-                context,
-                w.progress(),
-                (p) =>
-                    ProfilePage(controller: p, reminders: w.reminders?.call()),
-              ),
-            ),
-            if (!w.simple)
+    return GuideHost(
+      screen: 'you',
+      steps: youGuide,
+      child: Scaffold(
+        appBar: AppBar(title: Text(l10n.youTitle)),
+        body: FutureBuilder(
+          future: w.progress(),
+          builder: (context, snapshot) {
+            final controller = snapshot.data;
+            final data = <Widget>[
               _Entry(
-                icon: Icons.military_tech_outlined,
-                title: badgesL10n(context).badgesTitle,
-                subtitle: badgesL10n(context).badgesEntrySubtitle,
+                icon: Icons.person_outline,
+                title: l10n.youProfile,
+                subtitle: l10n.youProfileSubtitle,
                 onTap: () => _open(
                   context,
                   w.progress(),
-                  (p) => BadgesPage(controller: p),
-                ),
-              ),
-            if (!w.simple)
-              _Entry(
-                icon: Icons.insights_outlined,
-                title: l10n.youStats,
-                subtitle: l10n.youStatsSubtitle,
-                onTap: () =>
-                    _open(context, w.archive(), (a) => StatsPage(archive: a)),
-              ),
-            // Una sola voce per la settimana; l'immagine da condividere, per
-            // gli adulti, è il pulsante a destra.
-            _Entry(
-              icon: Icons.event_note_outlined,
-              title: l10n.youWeek,
-              subtitle: l10n.youWeekSubtitle,
-              onTap: () => _open(
-                context,
-                w.progress(),
-                (p) => WeeklySummaryPage(
-                  log: p.weekLog,
-                  openLesson: _playLesson,
-                  openPuzzles: w.puzzlesPage == null ? null : _openPuzzles,
-                ),
-              ),
-              action: w.simple
-                  ? null
-                  : IconButton(
-                      icon: const Icon(Icons.ios_share),
-                      tooltip: l10n.youWeekShare,
-                      onPressed: () => _open(
-                        context,
-                        w.archive(),
-                        (a) => PortraitPage(archive: a),
-                      ),
-                    ),
-            ),
-            if (!w.simple)
-              _Entry(
-                icon: Icons.inventory_2_outlined,
-                title: l10n.youArchive,
-                subtitle: l10n.youArchiveSubtitle,
-                onTap: () => _open(
-                  context,
-                  w.archive(),
-                  (a) => ArchivePage(
-                    archive: a,
-                    onOpen: w.openGame == null
-                        ? null
-                        : (g) => w.openGame!(context, g),
-                    onAnalyse: w.openAnalysis == null
-                        ? null
-                        : (g) => w.openAnalysis!(context, g),
+                  (p) => ProfilePage(
+                    controller: p,
+                    reminders: w.reminders?.call(),
                   ),
                 ),
               ),
-          ];
-          return ListView(
-            padding: context.withSystemBottom(
-              const EdgeInsets.only(bottom: 24),
-            ),
-            children: [
-              if (controller != null)
-                ListenableBuilder(
-                  listenable: controller,
-                  builder: (context, _) => controller.settings.enabled
-                      ? _Header(controller: controller, simple: w.simple)
-                      : const SizedBox.shrink(),
+              if (!w.simple)
+                _Entry(
+                  icon: Icons.military_tech_outlined,
+                  title: badgesL10n(context).badgesTitle,
+                  subtitle: badgesL10n(context).badgesEntrySubtitle,
+                  onTap: () => _open(
+                    context,
+                    w.progress(),
+                    (p) => BadgesPage(controller: p),
+                  ),
                 ),
-              _ContinueCard(path: _pathFuture, onOpen: _continue),
-              FutureBuilder<SavedGame?>(
-                future: _invite,
-                builder: (context, snapshot) {
-                  final game = snapshot.data;
-                  if (game == null || w.simple || w.openGame == null) {
-                    return const SizedBox.shrink();
-                  }
-                  return ReviewInviteCard(
-                    game: game,
-                    onReview: (g) {
-                      // Aperta la revisione l'invito ha fatto il suo.
-                      unawaited(dismissReviewInvite());
-                      setState(() {
-                        _invite = Future<SavedGame?>.value();
-                      });
-                      w.openGame?.call(context, g);
-                    },
-                    onDismiss: () {
-                      unawaited(dismissReviewInvite());
-                      setState(() {
-                        _invite = Future<SavedGame?>.value();
-                      });
-                    },
-                  );
-                },
+              if (!w.simple)
+                _Entry(
+                  icon: Icons.insights_outlined,
+                  title: l10n.youStats,
+                  subtitle: l10n.youStatsSubtitle,
+                  onTap: () =>
+                      _open(context, w.archive(), (a) => StatsPage(archive: a)),
+                ),
+              // Una sola voce per la settimana; l'immagine da condividere, per
+              // gli adulti, è il pulsante a destra.
+              _Entry(
+                icon: Icons.event_note_outlined,
+                title: l10n.youWeek,
+                subtitle: l10n.youWeekSubtitle,
+                onTap: () => _open(
+                  context,
+                  w.progress(),
+                  (p) => WeeklySummaryPage(
+                    log: p.weekLog,
+                    openLesson: _playLesson,
+                    openPuzzles: w.puzzlesPage == null ? null : _openPuzzles,
+                  ),
+                ),
+                action: w.simple
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.ios_share),
+                        tooltip: l10n.youWeekShare,
+                        onPressed: () => _open(
+                          context,
+                          w.archive(),
+                          (a) => PortraitPage(archive: a),
+                        ),
+                      ),
               ),
-              _Group(title: l10n.youGroupData, children: data),
-            ],
-          );
-        },
+              if (!w.simple)
+                _Entry(
+                  icon: Icons.inventory_2_outlined,
+                  title: l10n.youArchive,
+                  subtitle: l10n.youArchiveSubtitle,
+                  onTap: () => _open(
+                    context,
+                    w.archive(),
+                    (a) => ArchivePage(
+                      archive: a,
+                      onOpen: w.openGame == null
+                          ? null
+                          : (g) => w.openGame!(context, g),
+                      onAnalyse: w.openAnalysis == null
+                          ? null
+                          : (g) => w.openAnalysis!(context, g),
+                    ),
+                  ),
+                ),
+            ];
+            return ListView(
+              padding: context.withSystemBottom(
+                const EdgeInsets.only(bottom: 24),
+              ),
+              children: [
+                if (controller != null)
+                  ListenableBuilder(
+                    listenable: controller,
+                    builder: (context, _) => controller.settings.enabled
+                        ? GuideAnchor(
+                            id: 'you.header',
+                            child: _Header(
+                              controller: controller,
+                              simple: w.simple,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                GuideAnchor(
+                  id: 'you.continue',
+                  child: _ContinueCard(path: _pathFuture, onOpen: _continue),
+                ),
+                FutureBuilder<SavedGame?>(
+                  future: _invite,
+                  builder: (context, snapshot) {
+                    final game = snapshot.data;
+                    if (game == null || w.simple || w.openGame == null) {
+                      return const SizedBox.shrink();
+                    }
+                    return ReviewInviteCard(
+                      game: game,
+                      onReview: (g) {
+                        // Aperta la revisione l'invito ha fatto il suo.
+                        unawaited(dismissReviewInvite());
+                        setState(() {
+                          _invite = Future<SavedGame?>.value();
+                        });
+                        w.openGame?.call(context, g);
+                      },
+                      onDismiss: () {
+                        unawaited(dismissReviewInvite());
+                        setState(() {
+                          _invite = Future<SavedGame?>.value();
+                        });
+                      },
+                    );
+                  },
+                ),
+                GuideAnchor(
+                  id: 'you.data',
+                  child: _Group(title: l10n.youGroupData, children: data),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

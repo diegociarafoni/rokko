@@ -13,7 +13,7 @@ void main() {
   testWidgets('il riepilogo settimanale si apre dalla scheda Tu', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'guideEnabled': false});
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);

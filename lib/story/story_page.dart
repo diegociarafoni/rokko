@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 
 import '../engine/bots.dart';
+import '../guide/guide_host.dart';
+import '../guide/guide_steps.dart';
 import '../path/curriculum.dart';
 import '../path/path_controller.dart';
 import '../path/path_page.dart';
@@ -354,68 +356,91 @@ class _StoryPageState extends State<StoryPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = storyL10n(context);
-    return ListenableBuilder(
-      listenable: Listenable.merge([widget.path, widget.story]),
-      builder: (context, _) {
-        final progress = _progress;
-        final next = _next;
-        return Scaffold(
-          appBar: AppBar(title: Text(l10n.storyTitle)),
-          // Barra fissa e non pulsante flottante: così non copre i capitoli.
-          bottomNavigationBar: next == null
-              ? null
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                    child: FilledButton.icon(
-                      onPressed: () => _open(next.$1, next.$2),
-                      icon: const Icon(Icons.play_arrow),
-                      label: Text(l10n.storyContinue),
+    return GuideHost(
+      screen: 'story',
+      steps: storyGuide,
+      child: ListenableBuilder(
+        listenable: Listenable.merge([widget.path, widget.story]),
+        builder: (context, _) {
+          final progress = _progress;
+          final next = _next;
+          return Scaffold(
+            appBar: AppBar(title: Text(l10n.storyTitle)),
+            // Barra fissa e non pulsante flottante: così non copre i capitoli.
+            bottomNavigationBar: next == null
+                ? null
+                : SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                      child: GuideAnchor(
+                        id: 'story.continue',
+                        child: FilledButton.icon(
+                          onPressed: () => _open(next.$1, next.$2),
+                          icon: const Icon(Icons.play_arrow),
+                          label: Text(l10n.storyContinue),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-          body: ListView(
-            // I nove capitoli sono pochi: tutti costruiti, così la mappa può
-            // portare a ciascuno.
-            scrollCacheExtent: const ScrollCacheExtent.pixels(20000),
-            // Con la barra «Continua» l'ingombro è già assorbito da lei.
-            padding: next == null
-                ? context.withSystemBottom(
-                    const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  )
-                : const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            children: [
-              _Summary(
-                progress: progress,
-                current: _progress.currentChapterIndex,
-                onSelect: _goTo,
-              ),
-              const SizedBox(height: 12),
-              for (final (i, chapter) in storyChapters.indexed)
-                _ChapterCard(
-                  key: _cardKeys[i],
-                  index: i,
-                  chapter: chapter,
-                  progress: progress,
-                  current: next?.$1.id == chapter.id,
-                  last: i == storyChapters.length - 1,
-                  onOpen: (kind) => _open(chapter, kind),
-                  onFork: (theme) => widget.story.chooseFork(chapter, theme),
-                ),
-              if (next == null)
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    l10n.storyFinished,
-                    style: Theme.of(context).textTheme.titleMedium,
+            body: ListView(
+              // I nove capitoli sono pochi: tutti costruiti, così la mappa può
+              // portare a ciascuno.
+              scrollCacheExtent: const ScrollCacheExtent.pixels(20000),
+              // Con la barra «Continua» l'ingombro è già assorbito da lei.
+              padding: next == null
+                  ? context.withSystemBottom(
+                      const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    )
+                  : const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              children: [
+                GuideAnchor(
+                  id: 'story.summary',
+                  child: _Summary(
+                    progress: progress,
+                    current: _progress.currentChapterIndex,
+                    onSelect: _goTo,
                   ),
                 ),
-            ],
-          ),
-        );
-      },
+                const SizedBox(height: 12),
+                for (final (i, chapter) in storyChapters.indexed)
+                  _guideChapter(
+                    current: next?.$1.id == chapter.id,
+                    first: i == 0 && next == null,
+                    child: _ChapterCard(
+                      key: _cardKeys[i],
+                      index: i,
+                      chapter: chapter,
+                      progress: progress,
+                      current: next?.$1.id == chapter.id,
+                      last: i == storyChapters.length - 1,
+                      onOpen: (kind) => _open(chapter, kind),
+                      onFork: (theme) =>
+                          widget.story.chooseFork(chapter, theme),
+                    ),
+                  ),
+                if (next == null)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      l10n.storyFinished,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
+
+  /// La guida evidenzia il capitolo in corso, o il primo a storia finita.
+  Widget _guideChapter({
+    required bool current,
+    required bool first,
+    required Widget child,
+  }) =>
+      current || first ? GuideAnchor(id: 'story.chapter', child: child) : child;
 }
 
 /// Capitoli conclusi, in cima alla storia.

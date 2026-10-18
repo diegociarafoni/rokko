@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../guide/guide_host.dart';
+import '../guide/guide_steps.dart';
 import '../l10n/app_localizations.dart';
 import '../path/curriculum.dart';
 import '../path/path_controller.dart';
@@ -110,45 +112,55 @@ class _LearnPageState extends State<LearnPage> {
         l.youMinigamesSubtitle,
       ),
     ];
-    return Scaffold(
-      appBar: AppBar(title: Text(l.homeNavLearn)),
-      body: ListenableBuilder(
-        listenable: Listenable.merge([?_path, ?_story]),
-        builder: (context, _) {
-          final path = _path;
-          final story = _story;
-          final stage = path == null ? null : nextStoryStage(path.progress);
-          final onContinue = widget.onContinueStory;
-          return ListView(
-            padding: context.withSystemBottom(
-              const EdgeInsets.fromLTRB(16, 4, 16, 24),
-            ),
-            children: [
-              if (path != null && stage != null && onContinue != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: StoryHeroCard(
-                    key: const Key('learn-hero'),
-                    label: l.youContinueTitle,
-                    path: path.progress,
-                    story: story?.state ?? const StoryState(),
-                    stage: stage,
-                    onTap: () => _run(() => onContinue(stage)),
+    return GuideHost(
+      screen: 'learn',
+      steps: learnGuide,
+      child: Scaffold(
+        appBar: AppBar(title: Text(l.homeNavLearn)),
+        body: ListenableBuilder(
+          listenable: Listenable.merge([?_path, ?_story]),
+          builder: (context, _) {
+            final path = _path;
+            final story = _story;
+            final stage = path == null ? null : nextStoryStage(path.progress);
+            final onContinue = widget.onContinueStory;
+            return ListView(
+              padding: context.withSystemBottom(
+                const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              ),
+              children: [
+                if (path != null && stage != null && onContinue != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: GuideAnchor(
+                      id: 'learn.hero',
+                      child: StoryHeroCard(
+                        key: const Key('learn-hero'),
+                        label: l.youContinueTitle,
+                        path: path.progress,
+                        story: story?.state ?? const StoryState(),
+                        stage: stage,
+                        onTap: () => _run(() => onContinue(stage)),
+                      ),
+                    ),
                   ),
-                ),
-              for (final (id, icon, title, subtitle) in entries)
-                if (widget.features[id] case final action?)
-                  _LearnTile(
-                    key: Key('learn-$id'),
-                    icon: icon,
-                    title: title,
-                    subtitle: subtitle,
-                    hue: id == 'minigames' ? HomeHue.train : HomeHue.learn,
-                    onTap: () => _run(action),
-                  ),
-            ],
-          );
-        },
+                for (final (id, icon, title, subtitle) in entries)
+                  if (widget.features[id] case final action?)
+                    GuideAnchor(
+                      id: 'learn.$id',
+                      child: _LearnTile(
+                        key: Key('learn-$id'),
+                        icon: icon,
+                        title: title,
+                        subtitle: subtitle,
+                        hue: id == 'minigames' ? HomeHue.train : HomeHue.learn,
+                        onTap: () => _run(action),
+                      ),
+                    ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

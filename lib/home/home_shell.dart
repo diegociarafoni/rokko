@@ -25,6 +25,8 @@ import '../game/game_page.dart';
 import '../game/handicap.dart';
 import '../game/opponent_picker.dart';
 import '../game/variant.dart';
+import '../guide/guide_host.dart';
+import '../guide/guide_steps.dart';
 import '../l10n/app_localizations.dart';
 import '../masters/masters_controller.dart';
 import '../masters/masters_page.dart';
@@ -1109,6 +1111,21 @@ class _HomeShellState extends State<HomeShell> {
       if (i == 0) _homeRefresh.value++;
     }
 
+    return GuideHost(
+      screen: 'home',
+      steps: homeGuide,
+      // Le altre schede hanno la loro guida.
+      enabled: _tab == 0,
+      child: _scaffold(context, stack, destinations, select),
+    );
+  }
+
+  Widget _scaffold(
+    BuildContext context,
+    Widget stack,
+    List<NavigationDestination> destinations,
+    ValueChanged<int> select,
+  ) {
     // Su schermi larghi la barra passa a lato e il contenuto resta stretto.
     if (WindowSize.of(context) == WindowSize.expanded &&
         MediaQuery.sizeOf(context).height >= 480) {
@@ -1117,18 +1134,21 @@ class _HomeShellState extends State<HomeShell> {
           children: [
             SafeArea(
               right: false,
-              child: NavigationRail(
-                selectedIndex: _tab,
-                onDestinationSelected: select,
-                labelType: NavigationRailLabelType.all,
-                destinations: [
-                  for (final d in destinations)
-                    NavigationRailDestination(
-                      icon: d.icon,
-                      selectedIcon: d.selectedIcon,
-                      label: Text(d.label),
-                    ),
-                ],
+              child: GuideAnchor(
+                id: 'home.nav',
+                child: NavigationRail(
+                  selectedIndex: _tab,
+                  onDestinationSelected: select,
+                  labelType: NavigationRailLabelType.all,
+                  destinations: [
+                    for (final d in destinations)
+                      NavigationRailDestination(
+                        icon: d.icon,
+                        selectedIcon: d.selectedIcon,
+                        label: Text(d.label),
+                      ),
+                  ],
+                ),
               ),
             ),
             const VerticalDivider(width: 1),
@@ -1147,10 +1167,13 @@ class _HomeShellState extends State<HomeShell> {
     }
     return Scaffold(
       body: stack,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: select,
-        destinations: destinations,
+      bottomNavigationBar: GuideAnchor(
+        id: 'home.nav',
+        child: NavigationBar(
+          selectedIndex: _tab,
+          onDestinationSelected: select,
+          destinations: destinations,
+        ),
       ),
     );
   }

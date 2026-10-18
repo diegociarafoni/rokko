@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../backup/backup_page.dart';
+import '../guide/guide_host.dart';
 import '../l10n/app_localizations.dart';
 import '../progress/profile_page.dart';
 import '../progress/progress_controller.dart';
@@ -230,9 +233,10 @@ class AccessibilitySettingsPage extends _SectionPage {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final guides = GuideScope.maybeOf(context);
     return SettingsSectionScaffold(
       title: l10n.settingsSectionAccessibility,
-      listenable: _listenable,
+      listenable: Listenable.merge([_listenable, guides]),
       pinned: (_) => SettingsPreviewCard(settings: _s),
       builder: (context) {
         final s = _s;
@@ -274,6 +278,28 @@ class AccessibilitySettingsPage extends _SectionPage {
             value: s.confirmMove,
             onChanged: (v) => _set((c) => c.copyWith(confirmMove: v)),
           ),
+          if (guides != null) ...[
+            SwitchListTile(
+              key: const Key('guideEnabled'),
+              title: Text(l10n.guideOptionEnabled),
+              subtitle: Text(l10n.guideOptionEnabledDescription),
+              value: guides.enabled,
+              onChanged: guides.setEnabled,
+            ),
+            ListTile(
+              key: const Key('guideReplay'),
+              title: Text(l10n.guideOptionReplay),
+              subtitle: Text(l10n.guideOptionReplayDescription),
+              onTap: () {
+                unawaited(guides.reset());
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(content: Text(l10n.guideOptionReplayDone)),
+                  );
+              },
+            ),
+          ],
         ];
       },
     );

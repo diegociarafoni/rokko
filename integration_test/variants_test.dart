@@ -19,7 +19,7 @@ void main() {
   testWidgets('RF-120 una nuova partita Chess960 mescola la prima traversa', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'guideEnabled': false});
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -41,7 +41,7 @@ void main() {
   testWidgets('RF-27 una partita a handicap parte senza la donna del Bianco', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'guideEnabled': false});
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -69,7 +69,7 @@ void main() {
   });
 
   testWidgets('RF-123 il computer risponde a Re della collina', (tester) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'guideEnabled': false});
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
