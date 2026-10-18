@@ -158,6 +158,7 @@ class _SettingsPageState extends State<SettingsPage> {
               hasProgress: progress != null,
             );
             return ListView(
+              scrollCacheExtent: guideCacheExtent(context, 'settings'),
               padding: context.withSystemBottom(
                 const EdgeInsets.only(bottom: 24),
               ),

@@ -125,6 +125,7 @@ class _LearnPageState extends State<LearnPage> {
             final stage = path == null ? null : nextStoryStage(path.progress);
             final onContinue = widget.onContinueStory;
             return ListView(
+              scrollCacheExtent: guideCacheExtent(context, 'learn'),
               padding: context.withSystemBottom(
                 const EdgeInsets.fromLTRB(16, 4, 16, 24),
               ),

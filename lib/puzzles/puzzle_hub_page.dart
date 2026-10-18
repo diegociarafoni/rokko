@@ -70,6 +70,7 @@ class _PuzzleHubPageState extends State<PuzzleHubPage> {
             final kid = AppSettings.of(context).kidMode;
             final text = Theme.of(context).textTheme;
             return ListView(
+              scrollCacheExtent: guideCacheExtent(context, 'puzzles'),
               padding: context.withSystemBottom(
                 const EdgeInsets.only(bottom: 24),
               ),

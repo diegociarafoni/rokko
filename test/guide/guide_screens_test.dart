@@ -271,4 +271,22 @@ void main() {
     expect(steps.last, contains('Continua'));
     expect(guides.isSeen('story'), isTrue);
   });
+
+  testWidgets('su un telefono piccolo i puzzle a tempo non vengono saltati', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(720, 1280)
+      ..devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final guides = GuideController.memory(seen: {'home'});
+    final settings = SettingsController.defaults();
+    await tester.pumpWidget(_app(guides, settings, shell(settings)));
+    await tester.pumpAndSettle();
+    await tester.tap(tab('Puzzle'));
+    await tester.pumpAndSettle();
+    final steps = await walk(tester);
+    expect(steps.length, 3);
+    expect(steps.last, contains('a tempo'));
+  });
 }

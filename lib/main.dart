@@ -70,8 +70,7 @@ class _RokkoAppState extends State<RokkoApp> with WidgetsBindingObserver {
       (Object _) => SettingsController.defaults(),
     );
     final guides = await GuideController.load().catchError(
-      (Object _) =>
-          GuideController.memory(enabled: GuideController.defaultEnabled),
+      (Object _) => GuideController.memory(enabled: false),
     );
     // I contenuti (lezioni, grandi maestri…) servono prima delle schermate.
     await _loadContent(settings.value.language);

@@ -110,6 +110,19 @@ void main() {
       expect(guides.isSeen('demo'), isTrue);
     });
 
+    testWidgets(
+      'spegnere le guide chiude quella aperta senza darla per vista',
+      (tester) async {
+        final guides = GuideController.memory();
+        await tester.pumpWidget(_app(guides));
+        await tester.pumpAndSettle();
+        await guides.setEnabled(false);
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('guide-skip')), findsNothing);
+        expect(guides.isSeen('demo'), isFalse);
+      },
+    );
+
     testWidgets('Esc la chiude da tastiera', (tester) async {
       final guides = GuideController.memory();
       await tester.pumpWidget(_app(guides));

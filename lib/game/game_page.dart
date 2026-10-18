@@ -199,6 +199,9 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
+  /// La guida alla prima apertura è aperta sopra la partita.
+  bool _guideOpen = false;
+
   ChessGame _game = ChessGame();
 
   /// Vero mentre si disegna una freccia, per non scambiarla per uno scorrimento.
@@ -2640,14 +2643,24 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     return PopScope(
       canPop: !inProgress,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) unawaited(_confirmLeaveChallenge());
+        if (!didPop && !_guideOpen) unawaited(_confirmLeaveChallenge());
       },
       child: GuideHost(
         screen: 'game',
         steps: gameGuide,
         // Orologio e computer fermi finché si legge la guida.
-        onStart: _suspend,
-        onEnd: _resume,
+        onStart: () {
+          _guideOpen = true;
+          _suspend();
+        },
+        onEnd: () {
+          // Dopo il tasto indietro che ha chiuso la guida, il gestore della
+          // partita non deve aprire anche la conferma di uscita.
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _guideOpen = false,
+          );
+          _resume();
+        },
         child: _buildScaffold(context),
       ),
     );

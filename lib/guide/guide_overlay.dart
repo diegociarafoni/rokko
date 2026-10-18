@@ -75,22 +75,21 @@ class _GuideOverlayState extends State<GuideOverlay>
   void didChangeMetrics() =>
       WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
 
-  /// Il tasto indietro chiude la guida e non arriva alla schermata.
-  @override
-  Future<bool> didPopRoute() async {
-    widget.onClose();
-    return true;
-  }
-
-  /// Porta l'elemento in vista e ne misura il rettangolo a layout finito.
+  /// Porta l'elemento in vista (fuori dalla fase di costruzione, perché lo
+  /// scorrimento avvisa la barra del titolo) e ne misura il rettangolo.
   void _enter() {
-    final context = _current.targetKey.currentContext;
-    final object = context?.findRenderObject();
-    if (context != null && object != null) {
-      Scrollable.maybeOf(context)?.position
-          .ensureVisible(object, alignment: 0.35);
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final context = _current.targetKey.currentContext;
+      final object = context?.findRenderObject();
+      if (context != null && object != null) {
+        Scrollable.maybeOf(context)?.position
+            .ensureVisible(object, alignment: 0.35);
+      }
+      WidgetsBinding.instance
+        ..addPostFrameCallback((_) => _measure())
+        ..scheduleFrame();
+    });
   }
 
   void _measure() {

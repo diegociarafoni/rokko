@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderOffstage;
+import 'package:flutter/rendering.dart' show RenderOffstage, ScrollCacheExtent;
 
 import '../l10n/app_localizations.dart';
 import '../settings/settings.dart';
@@ -41,6 +41,14 @@ class _HostScope extends InheritedWidget {
   @override
   bool updateShouldNotify(_HostScope old) => old.state != state;
 }
+
+/// Estensione di costruzione delle liste di una schermata con la guida ancora da
+/// mostrare: gli elementi lontani esistono già e la guida può evidenziarli.
+/// Visto il tour, si torna a quella predefinita.
+ScrollCacheExtent? guideCacheExtent(BuildContext context, String screen) =>
+    GuideScope.maybeOf(context)?.shouldShow(screen) ?? false
+    ? const ScrollCacheExtent.pixels(4000)
+    : null;
 
 /// Segna un elemento della schermata che un passo della guida può evidenziare.
 /// Fuori da un [GuideHost] non fa nulla.
@@ -126,6 +134,10 @@ class GuideHostState extends State<GuideHost> {
         GuideScope.maybeOf(context)?.shouldShow(widget.screen) == true) {
       _done = false;
     }
+    // Guide spente mentre una è aperta: si chiude senza darla per vista.
+    if (_entry != null && GuideScope.maybeOf(context)?.enabled == false) {
+      _close(seen: false);
+    }
     _consider();
   }
 
@@ -197,7 +209,7 @@ class GuideHostState extends State<GuideHost> {
     _layoutScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _layoutScheduled = false;
-      _layout.value++;
+      if (mounted) _layout.value++;
     });
   }
 
@@ -220,14 +232,14 @@ class GuideHostState extends State<GuideHost> {
     setState(() {});
   }
 
-  void _close() {
+  void _close({bool seen = true}) {
     final entry = _entry;
     if (entry == null) return;
     entry.remove();
     entry.dispose();
     _entry = null;
     _done = true;
-    unawaited(GuideScope.maybeOf(context)?.markSeen(widget.screen));
+    if (seen) unawaited(GuideScope.maybeOf(context)?.markSeen(widget.screen));
     widget.onEnd?.call();
     if (mounted) setState(() {});
   }
@@ -242,5 +254,15 @@ class GuideHostState extends State<GuideHost> {
   }
 
   @override
-  Widget build(BuildContext context) => _HostScope(this, child: widget.child);
+  Widget build(BuildContext context) => _HostScope(
+    this,
+    // Il tasto indietro chiude la guida e non la schermata.
+    child: PopScope(
+      canPop: _entry == null,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _close();
+      },
+      child: widget.child,
+    ),
+  );
 }

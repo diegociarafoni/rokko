@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 
 import '../archive/archive_page.dart';
 import '../archive/game_archive.dart';
@@ -253,8 +252,7 @@ class _YouPageState extends State<YouPage> {
                 ),
             ];
             return ListView(
-              // Tutta la scheda costruita, per la guida (vedi la Home).
-              scrollCacheExtent: const ScrollCacheExtent.pixels(4000),
+              scrollCacheExtent: guideCacheExtent(context, 'you'),
               padding: context.withSystemBottom(
                 const EdgeInsets.only(bottom: 24),
               ),
