@@ -18,7 +18,7 @@ La storia accompagna il giocatore dal villaggio ai piedi della Rocca fino alla c
 | La pianura dei piani | La strategia, guardiano | 3 pedoni avanzati | Massimo |
 | L'accademia del maestro | La scuola di Capablanca, guardiano | 3 finali di torri | Stella |
 
-I bot sono quelli della scala (vedi [bot.md](bot.md)) in ordine di forza crescente; Tino, il custode del Capitolo 0, gioca solo nella Storia (`storyOnlyBots`), al livello 0 (400 Elo, fuori dai livelli scelti dall'utente): la sfida usa il loro livello del motore, senza orologio e con **Annulla** (come il guardiano). Lo stile e il libro d'aperture del bot non sono applicati alla sfida.
+I bot sono quelli della scala (vedi [bot.md](bot.md)) in ordine di forza crescente; Tino, il custode del Capitolo 0, gioca solo nella Storia (`storyOnlyBots`), al livello 0 (400 Elo, fuori dai livelli scelti dall'utente): la sfida usa il loro livello del motore, senza orologio e con **Annulla** e **Suggerisci** (come il guardiano). Lo stile e il libro d'aperture del bot non sono applicati alla sfida.
 
 ## Passi
 

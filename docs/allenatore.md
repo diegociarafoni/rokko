@@ -39,4 +39,4 @@ Le valutazioni sono memorizzate per posizione dentro la sessione (quelle fallite
 
 ## Suggerisci è indipendente dall'allenatore
 
-Il pulsante **Suggerisci** c'è sempre nelle partite contro il computer o un bot, con l'allenatore acceso o spento. L'allenatore resta solo l'opzione che giudica le mosse e avvisa degli errori. Nelle sfide, dove conta il punteggio, né l'allenatore né il suggerimento sono disponibili, salvo nella partita con l'istruttore.
+Il pulsante **Suggerisci** c'è sempre nelle partite contro il computer o un bot, con l'allenatore acceso o spento. L'allenatore resta solo l'opzione che giudica le mosse e avvisa degli errori. Nelle sfide dei tornei, dove conta il punteggio, né l'allenatore né il suggerimento sono disponibili, salvo nella partita con l'istruttore. Le sfide di allenamento del percorso e della Storia (guardiani e custodi, `GameChallenge.allowHints`) hanno **Suggerisci** ma non l'allenatore né la barra di valutazione.

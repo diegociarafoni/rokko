@@ -463,6 +463,10 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   bool get _helpAllowed =>
       _instructor || (!_isChallenge && (_inTraining || _computerSide == null));
 
+  /// Suggerisci anche nelle sfide che lo concedono (guardiani, custodi).
+  bool get _hintAllowed =>
+      _helpAllowed || (widget.challenge?.allowHints ?? false);
+
   /// L'annullamento contro il computer è dell'Allenamento; tra due persone o
   /// nelle sfide che lo concedono resta com'era.
   bool get _undoAllowed => _isChallenge
@@ -1509,6 +1513,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
 
   /// Suggerimento a livelli: prima il pezzo, poi la mossa.
   Future<void> _giveHint() async {
+    if (!_hintAllowed) return;
     final position = _game.position;
     final level = _hintedFen == position.fen ? HintLevel.move : HintLevel.piece;
     CoachHint? hint;
@@ -2700,7 +2705,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
               !_kid
           ? _openReview
           : null,
-      // Nelle sfide niente aiuti: né suggerimenti né ripetizione della mossa.
+      // Nelle sfide niente allenatore; il suggerimento solo se la sfida lo dà.
       coachOn: _computerSide == null || !_helpAllowed || _zen || !_engineGame
           ? null
           : _coachOn,
@@ -2712,7 +2717,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         _showMessage(_coachOn ? l10n.gameCoachOn : l10n.gameCoachOff);
       },
-      hintAvailable: _computerSide != null && _helpAllowed && _engineGame,
+      hintAvailable: _computerSide != null && _hintAllowed && _engineGame,
       onHint: _humanToMove && _pendingMove == null ? _giveHint : null,
       onThreat: _humanToMove && _pendingMove == null ? _showThreat : null,
     );

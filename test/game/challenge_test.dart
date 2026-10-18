@@ -39,6 +39,7 @@ void main() {
       Side side = Side.white,
       bool pushed = false,
       bool allowUndo = false,
+      bool allowHints = false,
     }) async {
       results.clear();
       tester.view.physicalSize = const Size(1170, 2532);
@@ -55,6 +56,7 @@ void main() {
           levelId: 2,
           side: side,
           allowUndo: allowUndo,
+          allowHints: allowHints,
         ),
         onFinished: (result, _) => results.add(result),
       );
@@ -96,6 +98,14 @@ void main() {
         find.byKey(const ValueKey('gameAction-new')),
       );
       expect(newGame.onTap, isNull);
+      expect(find.byTooltip('Altre azioni'), findsNothing);
+    });
+
+    testWidgets('con allowHints c\'è Suggerisci ma non l\'allenatore', (
+      tester,
+    ) async {
+      await open(tester, allowUndo: true, allowHints: true);
+      expect(find.text('Suggerisci'), findsOneWidget);
       expect(find.byTooltip('Altre azioni'), findsNothing);
     });
 
@@ -173,6 +183,7 @@ void main() {
     testWidgets('niente aiuti durante la sfida', (tester) async {
       await open(tester);
       expect(find.text('Aiuto'), findsNothing);
+      expect(find.text('Suggerisci'), findsNothing);
       expect(find.text('Coach'), findsNothing);
       expect(find.byTooltip('Altre azioni'), findsNothing);
     });
