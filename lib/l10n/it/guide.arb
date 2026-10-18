@@ -1,0 +1,226 @@
+{
+  "guideSkip": "Salta",
+  "@guideSkip": {
+    "description": "Pulsante che chiude la guida della schermata"
+  },
+  "guideNext": "Avanti",
+  "@guideNext": {
+    "description": "Pulsante che porta al passo successivo della guida"
+  },
+  "guideDone": "Fine",
+  "@guideDone": {
+    "description": "Pulsante dell'ultimo passo della guida"
+  },
+  "guideStepCounter": "{current}/{total}",
+  "@guideStepCounter": {
+    "description": "Numero del passo corrente e totale, per esempio 2/5",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "guideOptionEnabled": "Guide alla prima apertura",
+  "@guideOptionEnabled": {
+    "description": "Interruttore nelle impostazioni: mostrare le guide alla prima apertura"
+  },
+  "guideOptionEnabledDescription": "Mostra una breve guida la prima volta che apri una schermata. Si può sempre saltare.",
+  "@guideOptionEnabledDescription": {
+    "description": "Spiegazione dell'interruttore delle guide"
+  },
+  "guideOptionReplay": "Rivedi le guide",
+  "@guideOptionReplay": {
+    "description": "Voce nelle impostazioni che azzera le guide già viste"
+  },
+  "guideOptionReplayDescription": "Le guide ricompaiono alla prossima apertura di ogni schermata.",
+  "@guideOptionReplayDescription": {
+    "description": "Spiegazione della voce che rimostra le guide"
+  },
+  "guideOptionReplayDone": "Le guide ricompariranno.",
+  "@guideOptionReplayDone": {
+    "description": "Conferma dopo aver azzerato le guide"
+  },
+  "guideHomeProfile": "Il tuo profilo: tocca l'avatar per vedere livello, serie e traguardi.",
+  "@guideHomeProfile": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomeSettings": "Nelle Impostazioni scegli lingua, tema, scacchiera, suoni e aiuti. Qui puoi anche rivedere queste guide.",
+  "@guideHomeSettings": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomeSearch": "Cerca una funzione per nome, per esempio finali, badge o tornei.",
+  "@guideHomeSearch": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomeHero": "Qui trovi il prossimo passo consigliato: riprendere la partita, continuare la storia o fare il puzzle del giorno.",
+  "@guideHomeHero": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomeHeroKid": "Qui c'è la prossima cosa da fare. Toccala per continuare!",
+  "@guideHomeHeroKid": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomeGames": "Le funzioni dell'app sono raggruppate qui: ogni icona apre una schermata, dalla partita con un amico ai tornei.",
+  "@guideHomeGames": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomeStats": "Il tuo rating, la serie di giorni di fila e i badge guadagnati, a colpo d'occhio.",
+  "@guideHomeStats": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomePlay": "«Nuova partita» è il pulsante principale: scegli contro chi giocare e con quale tempo.",
+  "@guideHomePlay": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomePlayKid": "Tocca qui per giocare una nuova partita.",
+  "@guideHomePlayKid": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideHomeNav": "La barra in basso porta alle quattro schede: Home, Puzzle, Impara e Tu.",
+  "@guideHomeNav": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guidePuzzlesDaily": "Il puzzle del giorno è uguale per tutti e cambia ogni giorno: un buon modo per iniziare.",
+  "@guidePuzzlesDaily": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guidePuzzlesPractice": "Allenamento libero, puzzle per tema, percorso dai tuoi errori e ripasso di quelli sbagliati.",
+  "@guidePuzzlesPractice": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guidePuzzlesTimed": "Le modalità a tempo e a serie, con i tuoi record, e la sfida a un amico.",
+  "@guidePuzzlesTimed": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideLearnHero": "Riprendi la storia dal punto in cui eri rimasto.",
+  "@guideLearnHero": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideLearnStory": "La Storia: capitoli con racconto, lezioni, puzzle e un avversario da battere.",
+  "@guideLearnStory": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideLearnOpenings": "Le aperture: scopri i nomi, esplora le mosse e costruisci il tuo repertorio.",
+  "@guideLearnOpenings": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideLearnMasters": "Le partite dei grandi maestri, commentate: puoi anche provare a indovinare le mosse.",
+  "@guideLearnMasters": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideLearnMinigames": "Minigiochi brevi per allenare coordinate, visione e calcolo.",
+  "@guideLearnMinigames": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideYouHeader": "Il tuo livello, i punti esperienza e la serie di giorni giocati di fila.",
+  "@guideYouHeader": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideYouContinue": "Il prossimo passo del tuo percorso: tocca per riprendere.",
+  "@guideYouContinue": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideYouData": "Profilo, badge, statistiche, riepilogo della settimana e archivio delle partite.",
+  "@guideYouData": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideSettingsSearch": "Cerca un'impostazione per nome.",
+  "@guideSettingsSearch": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideSettingsProfile": "Profilo: avatar, progressi e copie di sicurezza dei tuoi dati.",
+  "@guideSettingsProfile": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideSettingsStyle": "Stile: scacchiera, pezzi, sfondo e suoni, con l'anteprima dal vivo.",
+  "@guideSettingsStyle": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideSettingsBoard": "Scacchiera: suoni, vibrazione, coordinate, mosse legali e notazione.",
+  "@guideSettingsBoard": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideSettingsGame": "Partita: promozione, rotazione, modalità tavolo e spiegazioni.",
+  "@guideSettingsGame": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideSettingsAccessibility": "Accessibilità: lingua, tema chiaro o scuro, colori per daltonici, modalità zen e queste guide.",
+  "@guideSettingsAccessibility": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideSettingsKid": "Profilo bambino: interfaccia semplice e bot amichevoli, protetta da un controllo per adulti.",
+  "@guideSettingsKid": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideNewGameClock": "Scegli il tempo di gioco, oppure gioca senza orologio.",
+  "@guideNewGameClock": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideNewGameQuick": "Con un tocco inizi subito: contro il computer al tuo livello, o in due dove il motore non c'è.",
+  "@guideNewGameQuick": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideNewGameFriend": "Gioca con un amico, sullo stesso telefono o ognuno sul suo.",
+  "@guideNewGameFriend": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideNewGameBots": "Una galleria di avversari con una personalità: scegli chi sfidare.",
+  "@guideNewGameBots": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameBoard": "Questa è la scacchiera: tocca un pezzo e poi la casa di arrivo, oppure trascinalo.",
+  "@guideGameBoard": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameBoardKid": "Tocca un pezzo, poi la casa dove vuoi muoverlo.",
+  "@guideGameBoardKid": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameMoves": "Qui compaiono le mosse giocate: tocca una mossa per rivedere la posizione di allora.",
+  "@guideGameMoves": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameHint": "Suggerimento: un tocco evidenzia il pezzo da muovere, due la mossa migliore.",
+  "@guideGameHint": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameUndo": "Annulla: toglie l'ultima mossa e ti lascia riprovare.",
+  "@guideGameUndo": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameFlip": "Gira la scacchiera per vederla dal lato opposto.",
+  "@guideGameFlip": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameNew": "Nuova: inizia un'altra partita.",
+  "@guideGameNew": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameDraw": "Patta: proponi di concludere la partita in parità.",
+  "@guideGameDraw": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameResign": "Abbandona: ti arrendi e la partita finisce.",
+  "@guideGameResign": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideGameMore": "Altro: allenatore, minaccia e gli altri comandi della partita.",
+  "@guideGameMore": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideStorySummary": "Il tuo cammino nella storia: i capitoli completati e il punto in cui sei.",
+  "@guideStorySummary": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideStoryChapter": "Ogni capitolo ha un racconto, lezioni, puzzle e un avversario da battere. Tocca un passo per iniziarlo.",
+  "@guideStoryChapter": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  },
+  "guideStoryContinue": "«Continua» ti porta subito al prossimo passo.",
+  "@guideStoryContinue": {
+    "description": "Testo della guida alla prima apertura della schermata"
+  }
+}

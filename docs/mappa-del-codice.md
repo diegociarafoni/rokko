@@ -18,6 +18,7 @@ Ogni cartella di `lib/` ha qui il documento che descrive le sue funzioni. La tab
 | `lib/engine/` | [avversario-computer.md](avversario-computer.md), [bot.md](bot.md) | Motore Stockfish, livelli, bot con personalità |
 | `lib/exchange/` | [scambio-qr.md](scambio-qr.md) | Scambio di partite tra telefoni con il QR, senza rete |
 | `lib/game/` | [regole-di-gioco.md](regole-di-gioco.md), [interfaccia.md](interfaccia.md), [avversario-computer.md](avversario-computer.md) | Stato della partita, varianti, orologio, suoni, schermata di gioco |
+| `lib/guide/` | [guida-all-uso.md](guida-all-uso.md) | Guida alla prima apertura di ogni schermata: passi evidenziati, «Salta», stato salvato |
 | `lib/home/` | [home.md](home.md), [interfaccia.md](interfaccia.md), [architettura.md](architettura.md) | Barra di navigazione, Home, scheda Impara e scheda Tu |
 | `lib/kids/` | [profilo-bambino.md](profilo-bambino.md) | Profilo bambino senza numeri |
 | `lib/l10n/` | [localizzazione.md](localizzazione.md) | Testi tradotti |

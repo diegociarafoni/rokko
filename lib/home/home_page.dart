@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../archive/saved_game.dart';
 import '../engine/bot_collection.dart';
 import '../engine/bots.dart';
+import '../guide/guide_host.dart';
 import '../l10n/app_localizations.dart';
 import '../path/curriculum.dart';
 import '../path/path_controller.dart';
@@ -258,10 +259,13 @@ class _HomePageState extends State<HomePage> {
               : () => _run(widget.features['profile']!),
         ),
         actions: [
-          IconButton(
-            tooltip: l.homeSettings,
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => _run(widget.onSettings),
+          GuideAnchor(
+            id: 'home.settings',
+            child: IconButton(
+              tooltip: l.homeSettings,
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () => _run(widget.onSettings),
+            ),
           ),
         ],
       ),
@@ -273,9 +277,12 @@ class _HomePageState extends State<HomePage> {
         ]),
         builder: (context, _) => _content(context, _data),
       ),
-      bottomNavigationBar: _PlayButton(
-        label: widget.simple ? l.homeKidPlay : l.homePlay,
-        onTap: () => _run(widget.onNewGame),
+      bottomNavigationBar: GuideAnchor(
+        id: 'home.play',
+        child: _PlayButton(
+          label: widget.simple ? l.homeKidPlay : l.homePlay,
+          onTap: () => _run(widget.onNewGame),
+        ),
       ),
     );
   }
@@ -308,33 +315,37 @@ class _HomePageState extends State<HomePage> {
       ],
     ];
     return ListView(
+      scrollCacheExtent: guideCacheExtent(context, 'home'),
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: children,
     );
   }
 
-  Widget _searchField(AppLocalizations l) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
-    child: TextField(
-      key: const Key('home-search'),
-      controller: _search,
-      textInputAction: TextInputAction.search,
-      onChanged: (_) => setState(() {}),
-      decoration: InputDecoration(
-        hintText: l.homeSearchHint,
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: _search.text.isEmpty
-            ? null
-            : IconButton(
-                tooltip: l.homeSearchClear,
-                icon: const Icon(Icons.close),
-                onPressed: () => setState(_search.clear),
-              ),
-        filled: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: BorderSide.none,
+  Widget _searchField(AppLocalizations l) => GuideAnchor(
+    id: 'home.search',
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: TextField(
+        key: const Key('home-search'),
+        controller: _search,
+        textInputAction: TextInputAction.search,
+        onChanged: (_) => setState(() {}),
+        decoration: InputDecoration(
+          hintText: l.homeSearchHint,
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: _search.text.isEmpty
+              ? null
+              : IconButton(
+                  tooltip: l.homeSearchClear,
+                  icon: const Icon(Icons.close),
+                  onPressed: () => setState(_search.clear),
+                ),
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(28),
+            borderSide: BorderSide.none,
+          ),
         ),
       ),
     ),
@@ -412,7 +423,13 @@ class _HomePageState extends State<HomePage> {
     };
     return [
       GroupHeader(title: title, hue: _hue(group)),
-      _grid([for (final s in specs) _tile(l, s)]),
+      if (group == _Group.play)
+        GuideAnchor(
+          id: 'home.games',
+          child: _grid([for (final s in specs) _tile(l, s)]),
+        )
+      else
+        _grid([for (final s in specs) _tile(l, s)]),
     ];
   }
 
@@ -479,8 +496,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _heroPadding(Widget child) =>
-      Padding(padding: const EdgeInsets.only(top: 4, bottom: 4), child: child);
+  Widget _heroPadding(Widget child) => GuideAnchor(
+    id: 'home.hero',
+    child: Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: child,
+    ),
+  );
 
   Widget? _recommended(BuildContext context, AppLocalizations l, _Data data) {
     final play = widget.onPlayBot;
@@ -564,26 +586,29 @@ class _HomePageState extends State<HomePage> {
         action: stats == null ? null : l.homeSeeAll,
         onAction: stats == null ? null : () => _run(stats),
       ),
-      Row(
-        children: [
-          _StatTile(
-            icon: Icons.trending_up_rounded,
-            value: '$rating',
-            label: l.homeStatsRating,
-          ),
-          const SizedBox(width: 8),
-          _StatTile(
-            icon: Icons.local_fire_department_rounded,
-            value: '${progress?.streak ?? 0}',
-            label: l.homeStatsStreak,
-          ),
-          const SizedBox(width: 8),
-          _StatTile(
-            icon: Icons.military_tech_rounded,
-            value: '${progress?.badges.length ?? 0}',
-            label: l.homeStatsBadges,
-          ),
-        ],
+      GuideAnchor(
+        id: 'home.stats',
+        child: Row(
+          children: [
+            _StatTile(
+              icon: Icons.trending_up_rounded,
+              value: '$rating',
+              label: l.homeStatsRating,
+            ),
+            const SizedBox(width: 8),
+            _StatTile(
+              icon: Icons.local_fire_department_rounded,
+              value: '${progress?.streak ?? 0}',
+              label: l.homeStatsStreak,
+            ),
+            const SizedBox(width: 8),
+            _StatTile(
+              icon: Icons.military_tech_rounded,
+              value: '${progress?.badges.length ?? 0}',
+              label: l.homeStatsBadges,
+            ),
+          ],
+        ),
       ),
     ];
   }
@@ -658,18 +683,21 @@ class _TopBar extends StatelessWidget {
         final level = levelForXp(p.state.xp);
         return Row(
           children: [
-            InkResponse(
-              key: const Key('home-profile'),
-              onTap: onProfile,
-              radius: 28,
-              child: SizedBox.square(
-                dimension: 48,
-                child: Center(
-                  child: ProfileAvatar(
-                    avatar: p.settings.avatar,
-                    frame: p.settings.frame,
-                    photo: simple ? null : p.activePhoto,
-                    size: 40,
+            GuideAnchor(
+              id: 'home.profile',
+              child: InkResponse(
+                key: const Key('home-profile'),
+                onTap: onProfile,
+                radius: 28,
+                child: SizedBox.square(
+                  dimension: 48,
+                  child: Center(
+                    child: ProfileAvatar(
+                      avatar: p.settings.avatar,
+                      frame: p.settings.frame,
+                      photo: simple ? null : p.activePhoto,
+                      size: 40,
+                    ),
                   ),
                 ),
               ),

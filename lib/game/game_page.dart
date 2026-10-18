@@ -29,6 +29,8 @@ import '../exchange/qr_l10n.dart';
 import '../exchange/qr_receive_page.dart';
 import '../exchange/qr_send_page.dart';
 import '../exchange/qr_transfer.dart';
+import '../guide/guide_host.dart';
+import '../guide/guide_steps.dart';
 import '../l10n/app_localizations.dart';
 import '../multiplayer/multiplayer_page.dart';
 import '../openings/explorer_page.dart';
@@ -197,6 +199,9 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
+  /// La guida alla prima apertura è aperta sopra la partita.
+  bool _guideOpen = false;
+
   ChessGame _game = ChessGame();
 
   /// Vero mentre si disegna una freccia, per non scambiarla per uno scorrimento.
@@ -2638,9 +2643,26 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     return PopScope(
       canPop: !inProgress,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) unawaited(_confirmLeaveChallenge());
+        if (!didPop && !_guideOpen) unawaited(_confirmLeaveChallenge());
       },
-      child: _buildScaffold(context),
+      child: GuideHost(
+        screen: 'game',
+        steps: gameGuide,
+        // Orologio e computer fermi finché si legge la guida.
+        onStart: () {
+          _guideOpen = true;
+          _suspend();
+        },
+        onEnd: () {
+          // Dopo il tasto indietro che ha chiuso la guida, il gestore della
+          // partita non deve aprire anche la conferma di uscita.
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _guideOpen = false,
+          );
+          _resume();
+        },
+        child: _buildScaffold(context),
+      ),
     );
   }
 
@@ -2919,7 +2941,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                     MediaQuery.sizeOf(context).shortestSide <
                     MoveMethod.phoneWidth,
               );
-              final board = BoardFrame.of(
+              final rawBoard = BoardFrame.of(
                 _settings,
                 size: boardSize,
                 orientation: _orientation,
@@ -2967,6 +2989,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                   ),
                 ),
               );
+              final board = GuideAnchor(id: 'game.board', child: rawBoard);
               final Widget boardArea = !showEval
                   ? board
                   : Row(
@@ -3086,23 +3109,26 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                           children: [
                             ?banner,
                             Expanded(
-                              child:
-                                  _game.moves.isEmpty &&
-                                      !_game.isOver &&
-                                      !_computerToMove
-                                  ? _FirstMoveHint(
-                                      text: _l10n(context).gameFirstMoveHint,
-                                    )
-                                  : LayoutBuilder(
-                                      builder: (context, area) => _MoveList(
-                                        game: _game,
-                                        horizontal:
-                                            area.maxHeight <
-                                            2 * _moveStripHeight,
-                                        selected: viewPly,
-                                        onSelect: _showPly,
+                              child: GuideAnchor(
+                                id: 'game.moves',
+                                child:
+                                    _game.moves.isEmpty &&
+                                        !_game.isOver &&
+                                        !_computerToMove
+                                    ? _FirstMoveHint(
+                                        text: _l10n(context).gameFirstMoveHint,
+                                      )
+                                    : LayoutBuilder(
+                                        builder: (context, area) => _MoveList(
+                                          game: _game,
+                                          horizontal:
+                                              area.maxHeight <
+                                              2 * _moveStripHeight,
+                                          selected: viewPly,
+                                          onSelect: _showPly,
+                                        ),
                                       ),
-                                    ),
+                              ),
                             ),
                           ],
                         );
@@ -3681,33 +3707,36 @@ class _ActionButton extends StatelessWidget {
         ? Theme.of(context).disabledColor
         : scheme.onSurface;
     // Senza Semantics il lettore di schermo non annuncia un pulsante né il suo stato.
-    Widget button = Semantics(
-      button: true,
-      enabled: onPressed != null,
-      child: InkWell(
-        key: ValueKey('gameAction-$id'),
-        onTap: onPressed,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Badge(
-              smallSize: 8,
-              isLabelVisible: dot,
-              child: Icon(icon, color: color),
-            ),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelMedium
-                      ?.copyWith(color: color),
+    Widget button = GuideAnchor(
+      id: 'game.action.$id',
+      child: Semantics(
+        button: true,
+        enabled: onPressed != null,
+        child: InkWell(
+          key: ValueKey('gameAction-$id'),
+          onTap: onPressed,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Badge(
+                smallSize: 8,
+                isLabelVisible: dot,
+                child: Icon(icon, color: color),
+              ),
+              const SizedBox(height: 4),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    style: Theme.of(context).textTheme.labelMedium
+                        ?.copyWith(color: color),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -4135,20 +4164,26 @@ class _TimeControlSheetState extends State<_TimeControlSheet> {
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-    child: Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: ListView(
-        // Ogni pagina riparte dall'alto.
-        key: ValueKey(_view),
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16),
-        children: switch (_view) {
-          _SheetView.menu => _menuChildren(context),
-          _SheetView.friend => _friendChildren(context),
-          _SheetView.friendApart => _friendApartChildren(context),
-          _SheetView.custom => _customChildren(context),
-        },
+  Widget build(BuildContext context) => GuideHost(
+    screen: 'newGame',
+    steps: newGameGuide,
+    child: SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: ListView(
+          // Ogni pagina riparte dall'alto.
+          key: ValueKey(_view),
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16),
+          children: switch (_view) {
+            _SheetView.menu => _menuChildren(context),
+            _SheetView.friend => _friendChildren(context),
+            _SheetView.friendApart => _friendApartChildren(context),
+            _SheetView.custom => _customChildren(context),
+          },
+        ),
       ),
     ),
   );
@@ -4338,21 +4373,25 @@ class _TimeControlSheetState extends State<_TimeControlSheet> {
     String subtitle,
     VoidCallback onTap, {
     Key? key,
-  }) => Padding(
-    padding: const EdgeInsets.only(top: 8),
-    child: Card(
-      key: key,
-      margin: EdgeInsets.zero,
-      child: ListTile(
-        minVerticalPadding: 12,
-        leading: Icon(icon, size: 32),
-        title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
+    String? anchor,
+  }) {
+    final tile = Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Card(
+        key: key,
+        margin: EdgeInsets.zero,
+        child: ListTile(
+          minVerticalPadding: 12,
+          leading: Icon(icon, size: 32),
+          title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+          subtitle: Text(subtitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onTap,
+        ),
       ),
-    ),
-  );
+    );
+    return anchor == null ? tile : GuideAnchor(id: anchor, child: tile);
+  }
 
   /// Partita contro il computer del livello del giocatore, o in due se manca
   /// il motore.
@@ -4380,45 +4419,53 @@ class _TimeControlSheetState extends State<_TimeControlSheet> {
     return [
       _header(context, l10n.gameNewTitle),
       const SizedBox(height: 12),
-      DropdownButtonFormField<TimeControl?>(
-        key: const ValueKey('quick-clock'),
-        initialValue: _quickControl,
-        isExpanded: true,
-        decoration: InputDecoration(labelText: l10n.gameQuickClock),
-        items: [
-          DropdownMenuItem(child: Text(l10n.gameNoClock)),
-          for (final c in TimeControl.presets)
-            DropdownMenuItem(
-              value: c,
-              child: Text('${timeCategoryName(l10n, c.category)} · ${c.label}'),
-            ),
-        ],
-        onChanged: (v) => setState(() => _quickControl = v),
+      GuideAnchor(
+        id: 'newGame.clock',
+        child: DropdownButtonFormField<TimeControl?>(
+          key: const ValueKey('quick-clock'),
+          initialValue: _quickControl,
+          isExpanded: true,
+          decoration: InputDecoration(labelText: l10n.gameQuickClock),
+          items: [
+            DropdownMenuItem(child: Text(l10n.gameNoClock)),
+            for (final c in TimeControl.presets)
+              DropdownMenuItem(
+                value: c,
+                child: Text(
+                  '${timeCategoryName(l10n, c.category)} · ${c.label}',
+                ),
+              ),
+          ],
+          onChanged: (v) => setState(() => _quickControl = v),
+        ),
       ),
       const SizedBox(height: 12),
-      FilledButton(
-        key: const ValueKey('quick-start'),
-        style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(76),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        ),
-        onPressed: () => Navigator.pop(context, _quickChoice()),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              l10n.gameQuickStart,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.onPrimary,
+      GuideAnchor(
+        id: 'newGame.quick',
+        child: FilledButton(
+          key: const ValueKey('quick-start'),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(76),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          onPressed: () => Navigator.pop(context, _quickChoice()),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.gameQuickStart,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.onPrimary,
+                ),
               ),
-            ),
-            Text(
-              engine
-                  ? l10n.gameQuickVsComputer(level.id, level.approxElo)
-                  : l10n.gameQuickTwoPlayers,
-              textAlign: TextAlign.center,
-            ),
-          ],
+              Text(
+                engine
+                    ? l10n.gameQuickVsComputer(level.id, level.approxElo)
+                    : l10n.gameQuickTwoPlayers,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
       const SizedBox(height: 8),
@@ -4428,6 +4475,7 @@ class _TimeControlSheetState extends State<_TimeControlSheet> {
         l10n.gameMenuFriendSubtitle,
         () => setState(() => _view = _SheetView.friend),
         key: const ValueKey('menu-friend'),
+        anchor: 'newGame.friend',
       ),
       if (engine) ...[
         _tile(
@@ -4462,6 +4510,7 @@ class _TimeControlSheetState extends State<_TimeControlSheet> {
             );
           },
           key: const Key('open-bot-gallery'), // l10n-ok
+          anchor: 'newGame.bots',
         ),
         _tile(
           Icons.school_outlined,

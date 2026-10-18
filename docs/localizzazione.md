@@ -37,6 +37,7 @@ Il russo (`ru`) è `pronta`: tutte le chiavi dei `.arb` (`lib/l10n/ru/`) e i con
 | `l10n.yaml` | Configurazione del generatore |
 | `lib/l10n/it/<funzione>.arb` | Testi italiani di una funzione, modello di riferimento con le descrizioni |
 | `lib/l10n/en/<funzione>.arb` | Traduzione inglese, con gli stessi nomi di file e le stesse chiavi |
+| `lib/l10n/<lingua>/guide.arb` | Testi della guida alla prima apertura ([guida-all-uso.md](guida-all-uso.md)) |
 | `tool/l10n.dart` | Unisce i file per funzione e lancia `flutter gen-l10n` |
 | `lib/l10n/app_<lingua>.arb`, `lib/l10n/app_localizations*.dart` | Prodotti da `tool/l10n.dart`, non sono nel repository (`.gitignore`) |
 

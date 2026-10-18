@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:rokko/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../test/game_actions.dart';
 import '../test/support/italian_device.dart';
@@ -36,6 +37,7 @@ Future<void> _openFeature(WidgetTester tester, String id) async {
 }
 
 Future<void> _start(WidgetTester tester) async {
+  SharedPreferences.setMockInitialValues({'guideEnabled': false});
   tester.view.physicalSize = const Size(1170, 2532);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);

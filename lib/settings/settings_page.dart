@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../about/about_page.dart';
+import '../guide/guide_host.dart';
+import '../guide/guide_steps.dart';
 import '../l10n/app_localizations.dart';
 import '../progress/progress_controller.dart';
 import '../style/style_page.dart';
@@ -127,81 +129,96 @@ class _SettingsPageState extends State<SettingsPage> {
 
     Widget tile(SettingsSection section) {
       final (icon, title, hint) = _entry(l10n, section);
-      return ListTile(
-        key: Key('section-${section.name}'),
-        leading: Icon(icon, color: tokens.action),
-        title: Text(title),
-        subtitle: Text(hint),
-        trailing: const Icon(Icons.chevron_right),
-        minTileHeight: tokens.minTouch,
-        onTap: () => open(section),
+      return GuideAnchor(
+        id: 'settings.${section.name}',
+        child: ListTile(
+          key: Key('section-${section.name}'),
+          leading: Icon(icon, color: tokens.action),
+          title: Text(title),
+          subtitle: Text(hint),
+          trailing: const Icon(Icons.chevron_right),
+          minTileHeight: tokens.minTouch,
+          onTap: () => open(section),
+        ),
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.settingsTitle)),
-      body: ListenableBuilder(
-        listenable: _search,
-        builder: (context, _) {
-          final query = _search.text;
-          final hits = settingsHits(l10n, query, hasProgress: progress != null);
-          return ListView(
-            padding: context.withSystemBottom(
-              const EdgeInsets.only(bottom: 24),
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: TextField(
-                  key: const Key('settingsSearch'),
-                  controller: _search,
-                  textInputAction: TextInputAction.search,
-                  decoration: InputDecoration(
-                    hintText: l10n.settingsSearchHint,
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: query.isEmpty
-                        ? null
-                        : IconButton(
-                            icon: const Icon(Icons.close),
-                            tooltip: l10n.settingsSearchClear,
-                            onPressed: _search.clear,
-                          ),
-                    border: const OutlineInputBorder(),
+    return GuideHost(
+      screen: 'settings',
+      steps: settingsGuide,
+      child: Scaffold(
+        appBar: AppBar(title: Text(l10n.settingsTitle)),
+        body: ListenableBuilder(
+          listenable: _search,
+          builder: (context, _) {
+            final query = _search.text;
+            final hits = settingsHits(
+              l10n,
+              query,
+              hasProgress: progress != null,
+            );
+            return ListView(
+              scrollCacheExtent: guideCacheExtent(context, 'settings'),
+              padding: context.withSystemBottom(
+                const EdgeInsets.only(bottom: 24),
+              ),
+              children: [
+                GuideAnchor(
+                  id: 'settings.search',
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: TextField(
+                      key: const Key('settingsSearch'),
+                      controller: _search,
+                      textInputAction: TextInputAction.search,
+                      decoration: InputDecoration(
+                        hintText: l10n.settingsSearchHint,
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: query.isEmpty
+                            ? null
+                            : IconButton(
+                                icon: const Icon(Icons.close),
+                                tooltip: l10n.settingsSearchClear,
+                                onPressed: _search.clear,
+                              ),
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              if (query.trim().isEmpty)
-                for (final s in sections)
-                  if (s == SettingsSection.kid) ...[
-                    const Divider(height: 24),
-                    tile(s),
-                  ] else
-                    tile(s)
-              else if (hits.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    l10n.settingsSearchEmpty,
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              else
-                for (final h in hits)
-                  ListTile(
-                    title: Text(h.title),
-                    subtitle: switch (h.sectionTitle == h.title
-                        ? h.description
-                        : h.sectionTitle) {
-                      final String text when text.isNotEmpty => Text(text),
-                      _ => null,
-                    },
-                    trailing: const Icon(Icons.chevron_right),
-                    minTileHeight: tokens.minTouch,
-                    onTap: () => open(h.section),
-                  ),
-            ],
-          );
-        },
+                if (query.trim().isEmpty)
+                  for (final s in sections)
+                    if (s == SettingsSection.kid) ...[
+                      const Divider(height: 24),
+                      tile(s),
+                    ] else
+                      tile(s)
+                else if (hits.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      l10n.settingsSearchEmpty,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                else
+                  for (final h in hits)
+                    ListTile(
+                      title: Text(h.title),
+                      subtitle: switch (h.sectionTitle == h.title
+                          ? h.description
+                          : h.sectionTitle) {
+                        final String text when text.isNotEmpty => Text(text),
+                        _ => null,
+                      },
+                      trailing: const Icon(Icons.chevron_right),
+                      minTileHeight: tokens.minTouch,
+                      onTap: () => open(h.section),
+                    ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

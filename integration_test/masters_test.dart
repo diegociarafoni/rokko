@@ -22,7 +22,7 @@ void main() {
   testWidgets(
     'RF-87 RF-88 si sfoglia una partita e si indovina la prima mossa',
     (tester) async {
-      SharedPreferences.setMockInitialValues({});
+      SharedPreferences.setMockInitialValues({'guideEnabled': false});
       tester.view.physicalSize = const Size(1170, 2532);
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);

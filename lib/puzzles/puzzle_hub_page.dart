@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../exchange/qr_l10n.dart';
+import '../guide/guide_host.dart';
+import '../guide/guide_steps.dart';
 import '../kids/kid_display.dart';
 import '../l10n/app_localizations.dart';
 import '../settings/settings.dart';
@@ -46,176 +48,186 @@ class _PuzzleHubPageState extends State<PuzzleHubPage> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.puzzleHubTitle)),
-      body: FutureBuilder<PuzzleTrainer>(
-        future: widget.trainer,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text(l.puzzleHubLoadError));
-          }
-          final trainer = snapshot.data;
-          if (trainer == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final daily = trainer.library.daily(widget.today ?? DateTime.now());
-          final due = trainer.dueReviews().length;
-          // Profilo bambino (RP-06): niente punteggio, conteggi e difficoltà;
-          // i puzzle risolti diventano stelle.
-          final kid = AppSettings.of(context).kidMode;
-          final text = Theme.of(context).textTheme;
-          return ListView(
-            padding: context.withSystemBottom(
-              const EdgeInsets.only(bottom: 24),
-            ),
-            children: [
-              if (kid)
-                _KidHeader(solved: trainer.solvedCount)
-              else
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Semantics(
-                        header: true,
-                        child: Text(
-                          l.puzzleHubRating(trainer.rating.rating.round()),
-                          style: text.headlineMedium,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l.puzzleHubStats(
-                          trainer.solvedCount,
-                          trainer.failedCount,
-                          trainer.library.puzzles.length,
-                        ),
-                        style: text.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ),
-              _DailyCard(
-                title: l.puzzleDailyTitle,
-                subtitle: kid
-                    ? l.kidPuzzleDaily
-                    : l.puzzleDailySubtitle(daily.rating),
-                onTap: () => _open(
-                  PuzzlePage(
-                    trainer: trainer,
-                    puzzle: daily,
-                    guide: PuzzleGuide.daily,
-                    title: l.puzzleDailyTitle,
-                    onActivity: widget.onActivity,
-                  ),
-                ),
+    return GuideHost(
+      screen: 'puzzles',
+      steps: puzzlesGuide,
+      child: Scaffold(
+        appBar: AppBar(title: Text(l.puzzleHubTitle)),
+        body: FutureBuilder<PuzzleTrainer>(
+          future: widget.trainer,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text(l.puzzleHubLoadError));
+            }
+            final trainer = snapshot.data;
+            if (trainer == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final daily = trainer.library.daily(widget.today ?? DateTime.now());
+            final due = trainer.dueReviews().length;
+            // Profilo bambino (RP-06): niente punteggio, conteggi e difficoltà;
+            // i puzzle risolti diventano stelle.
+            final kid = AppSettings.of(context).kidMode;
+            final text = Theme.of(context).textTheme;
+            return ListView(
+              scrollCacheExtent: guideCacheExtent(context, 'puzzles'),
+              padding: context.withSystemBottom(
+                const EdgeInsets.only(bottom: 24),
               ),
-              _Section(
-                title: l.puzzleSectionPractice,
-                children: [
-                  _HubTile(
-                    icon: Icons.extension_outlined,
-                    title: l.puzzleTraining,
+              children: [
+                if (kid)
+                  _KidHeader(solved: trainer.solvedCount)
+                else
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Semantics(
+                          header: true,
+                          child: Text(
+                            l.puzzleHubRating(trainer.rating.rating.round()),
+                            style: text.headlineMedium,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          l.puzzleHubStats(
+                            trainer.solvedCount,
+                            trainer.failedCount,
+                            trainer.library.puzzles.length,
+                          ),
+                          style: text.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                GuideAnchor(
+                  id: 'puzzles.daily',
+                  child: _DailyCard(
+                    title: l.puzzleDailyTitle,
                     subtitle: kid
-                        ? l.kidPuzzleTraining
-                        : l.puzzleTrainingSubtitle,
+                        ? l.kidPuzzleDaily
+                        : l.puzzleDailySubtitle(daily.rating),
                     onTap: () => _open(
                       PuzzlePage(
                         trainer: trainer,
-                        guide: PuzzleGuide.training,
+                        puzzle: daily,
+                        guide: PuzzleGuide.daily,
+                        title: l.puzzleDailyTitle,
                         onActivity: widget.onActivity,
                       ),
                     ),
                   ),
-                  _HubTile(
-                    icon: Icons.category_outlined,
-                    title: l.puzzleByTheme,
-                    subtitle: l.puzzleByThemeSubtitle,
-                    onTap: () => _open(
-                      _ThemeListPage(
-                        trainer: trainer,
-                        onActivity: widget.onActivity,
-                      ),
-                    ),
-                  ),
-                  // Gli errori e i temi sbagliati sono una misura del giocatore:
-                  // il profilo bambino non li mostra.
-                  if (!kid)
+                ),
+                _Section(
+                  anchor: 'puzzles.practice',
+                  title: l.puzzleSectionPractice,
+                  children: [
                     _HubTile(
-                      icon: Icons.route_outlined,
-                      title: l.puzzleMistakePath,
-                      subtitle: l.puzzleMistakePathSubtitle,
+                      icon: Icons.extension_outlined,
+                      title: l.puzzleTraining,
+                      subtitle: kid
+                          ? l.kidPuzzleTraining
+                          : l.puzzleTrainingSubtitle,
                       onTap: () => _open(
-                        MistakePathPage(
+                        PuzzlePage(
+                          trainer: trainer,
+                          guide: PuzzleGuide.training,
+                          onActivity: widget.onActivity,
+                        ),
+                      ),
+                    ),
+                    _HubTile(
+                      icon: Icons.category_outlined,
+                      title: l.puzzleByTheme,
+                      subtitle: l.puzzleByThemeSubtitle,
+                      onTap: () => _open(
+                        _ThemeListPage(
                           trainer: trainer,
                           onActivity: widget.onActivity,
                         ),
                       ),
                     ),
-                  _HubTile(
-                    icon: Icons.replay_outlined,
-                    title: l.puzzleReview,
-                    subtitle: kid
-                        ? (due == 0
-                              ? l.kidPuzzleReviewNone
-                              : l.kidPuzzleReviewDue)
-                        : (due == 0
-                              ? l.puzzleReviewNone
-                              : l.puzzleReviewDue(due)),
-                    onTap: due == 0
-                        ? null
-                        : () => _open(
-                            PuzzlePage(
-                              trainer: trainer,
-                              feed: ReviewFeed(trainer),
-                              guide: PuzzleGuide.review,
-                              title: l.puzzleReviewTitle,
-                              onActivity: widget.onActivity,
-                            ),
-                          ),
-                  ),
-                ],
-              ),
-              // Le modalità a tempo e la sfida ruotano attorno a punti, errori,
-              // record e confronto: nel profilo bambino non compaiono.
-              if (!kid)
-                _Section(
-                  title: l.puzzleSectionTimed,
-                  children: [
-                    for (final mode in PuzzleRunMode.values)
+                    // Gli errori e i temi sbagliati sono una misura del giocatore:
+                    // il profilo bambino non li mostra.
+                    if (!kid)
                       _HubTile(
-                        icon: Icons.bolt_outlined,
-                        title: l.puzzleRunLabel(mode.name),
-                        subtitle: l.puzzleRunDescription(mode.name),
-                        trailing: Text(
-                          l.puzzleRecord(trainer.records.best(mode)),
-                          style: text.labelLarge,
-                        ),
+                        icon: Icons.route_outlined,
+                        title: l.puzzleMistakePath,
+                        subtitle: l.puzzleMistakePathSubtitle,
                         onTap: () => _open(
-                          PuzzleRunPage(
+                          MistakePathPage(
                             trainer: trainer,
-                            mode: mode,
                             onActivity: widget.onActivity,
                           ),
                         ),
                       ),
                     _HubTile(
-                      icon: Icons.people_outline,
-                      title: qrL10n(context).challengeTitle,
-                      subtitle: qrL10n(context).challengeSubtitle,
-                      onTap: () => _open(
-                        FriendChallengePage(
-                          trainer: trainer,
-                          onActivity: widget.onActivity,
-                        ),
-                      ),
+                      icon: Icons.replay_outlined,
+                      title: l.puzzleReview,
+                      subtitle: kid
+                          ? (due == 0
+                                ? l.kidPuzzleReviewNone
+                                : l.kidPuzzleReviewDue)
+                          : (due == 0
+                                ? l.puzzleReviewNone
+                                : l.puzzleReviewDue(due)),
+                      onTap: due == 0
+                          ? null
+                          : () => _open(
+                              PuzzlePage(
+                                trainer: trainer,
+                                feed: ReviewFeed(trainer),
+                                guide: PuzzleGuide.review,
+                                title: l.puzzleReviewTitle,
+                                onActivity: widget.onActivity,
+                              ),
+                            ),
                     ),
                   ],
                 ),
-            ],
-          );
-        },
+                // Le modalità a tempo e la sfida ruotano attorno a punti, errori,
+                // record e confronto: nel profilo bambino non compaiono.
+                if (!kid)
+                  _Section(
+                    anchor: 'puzzles.timed',
+                    title: l.puzzleSectionTimed,
+                    children: [
+                      for (final mode in PuzzleRunMode.values)
+                        _HubTile(
+                          icon: Icons.bolt_outlined,
+                          title: l.puzzleRunLabel(mode.name),
+                          subtitle: l.puzzleRunDescription(mode.name),
+                          trailing: Text(
+                            l.puzzleRecord(trainer.records.best(mode)),
+                            style: text.labelLarge,
+                          ),
+                          onTap: () => _open(
+                            PuzzleRunPage(
+                              trainer: trainer,
+                              mode: mode,
+                              onActivity: widget.onActivity,
+                            ),
+                          ),
+                        ),
+                      _HubTile(
+                        icon: Icons.people_outline,
+                        title: qrL10n(context).challengeTitle,
+                        subtitle: qrL10n(context).challengeSubtitle,
+                        onTap: () => _open(
+                          FriendChallengePage(
+                            trainer: trainer,
+                            onActivity: widget.onActivity,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -286,8 +298,13 @@ class _DailyCard extends StatelessWidget {
 
 /// Gruppo di voci con un titolo, in una scheda.
 class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.children});
+  const _Section({
+    required this.anchor,
+    required this.title,
+    required this.children,
+  });
 
+  final String anchor;
   final String title;
   final List<Widget> children;
 
@@ -309,10 +326,13 @@ class _Section extends StatelessWidget {
             ),
           ),
         ),
-        Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          clipBehavior: Clip.antiAlias,
-          child: Column(children: children),
+        GuideAnchor(
+          id: anchor,
+          child: Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            clipBehavior: Clip.antiAlias,
+            child: Column(children: children),
+          ),
         ),
       ],
     );

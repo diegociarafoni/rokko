@@ -114,7 +114,10 @@ Future<void> _back(WidgetTester tester) async {
 /// [dragging] attiva anche il trascinamento: sul telefono il modo
 /// predefinito usa solo i due tocchi.
 Future<void> _start(WidgetTester tester, {bool dragging = false}) async {
-  SharedPreferences.setMockInitialValues({if (dragging) 'moveMethod': 'both'});
+  SharedPreferences.setMockInitialValues({
+    'guideEnabled': false,
+    if (dragging) 'moveMethod': 'both',
+  });
   tester.view.physicalSize = const Size(1170, 2532);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);

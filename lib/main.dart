@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 
 import 'backup/backup.dart';
 import 'backup/backup_page.dart';
+import 'guide/guide_controller.dart';
+import 'guide/guide_host.dart';
 import 'home/home_shell.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/content.dart';
@@ -43,6 +45,7 @@ class RokkoApp extends StatefulWidget {
 
 class _RokkoAppState extends State<RokkoApp> with WidgetsBindingObserver {
   SettingsController? _settings;
+  GuideController? _guides;
 
   @override
   void initState() {
@@ -66,6 +69,9 @@ class _RokkoAppState extends State<RokkoApp> with WidgetsBindingObserver {
     final settings = await SettingsController.load().catchError(
       (Object _) => SettingsController.defaults(),
     );
+    final guides = await GuideController.load().catchError(
+      (Object _) => GuideController.memory(enabled: false),
+    );
     // I contenuti (lezioni, grandi maestri…) servono prima delle schermate.
     await _loadContent(settings.value.language);
     settings.addListener(_onSettings);
@@ -78,7 +84,10 @@ class _RokkoAppState extends State<RokkoApp> with WidgetsBindingObserver {
           .accessibilityFeatures
           .disableAnimations,
     );
-    setState(() => _settings = settings);
+    setState(() {
+      _settings = settings;
+      _guides = guides;
+    });
   }
 
   /// Lingua dei contenuti richiesta per ultima.
@@ -195,7 +204,13 @@ class _RokkoAppState extends State<RokkoApp> with WidgetsBindingObserver {
       // Sopra il Navigator, così anche le pagine aperte con push lo vedono.
       builder: (context, child) => settings == null
           ? child!
-          : SettingsScope(controller: settings, child: child!),
+          : SettingsScope(
+              controller: settings,
+              child: GuideScope(
+                controller: _guides ?? GuideController.memory(enabled: false),
+                child: child!,
+              ),
+            ),
       home: settings == null ? const Scaffold() : HomeShell(settings: settings),
     );
   }

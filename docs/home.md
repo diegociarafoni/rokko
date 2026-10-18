@@ -22,6 +22,10 @@ I dati arrivano uno alla volta: la Home si disegna subito e si completa man mano
 
 `lib/home/learn_page.dart`: in testa «Continua da dove eri» (la Storia), poi Storia, Aperture, Finali, Grandi maestri e Minigiochi. Le Aperture si aprono da qui e dalla Home.
 
+## Guida alla prima apertura
+
+Ogni scheda e la Home hanno una guida a passi la prima volta che si aprono (vedi [guida-all-uso.md](guida-all-uso.md)).
+
 ## Profilo bambino
 
 Niente ricerca, avversario consigliato, statistiche e ultime partite; il pulsante dice «Giochiamo!». Mancano contro un bot, amico, tornei, scacchiera fisica, Aperture, statistiche, badge e archivio (vedi [profilo-bambino.md](profilo-bambino.md)).

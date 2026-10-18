@@ -30,7 +30,7 @@ void main() {
   testWidgets('RF-53 si costruisce un finale e lo si gioca fino al matto', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'guideEnabled': false});
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
