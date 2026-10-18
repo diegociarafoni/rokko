@@ -143,7 +143,7 @@
   "botOptionsCoach": "Entrenador",
   "botOptionsCoachHint": "Te avisa cuando cometes un error.",
   "botOptionsTraining": "Entrenamiento",
-  "botOptionsTrainingHint": "Deshacer, pistas y amenazas. No cuenta para el Elo ni las victorias; desactivado es el Desafío, sin ayudas.",
+  "botOptionsTrainingHint": "Pistas y amenazas. No cuenta para el Elo ni las victorias; desactivado es el Desafío, sin ayudas.",
   "botOptionsSummary": "{time} · {variant}",
   "@botOptionsSummary": {
     "placeholders": {

@@ -143,7 +143,7 @@
   "botOptionsCoach": "Trainer",
   "botOptionsCoachHint": "Warnt dich, wenn du einen Fehler machst.",
   "botOptionsTraining": "Training",
-  "botOptionsTrainingHint": "Zug zurück, Hinweise und Drohungen. Zählt nicht für Elo und Siege; aus ist die Herausforderung, ohne Hilfen.",
+  "botOptionsTrainingHint": "Hinweise und Drohungen. Zählt nicht für Elo und Siege; aus ist die Herausforderung, ohne Hilfen.",
   "botOptionsSummary": "{time} · {variant}",
   "@botOptionsSummary": {
     "placeholders": {

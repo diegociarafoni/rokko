@@ -36,7 +36,6 @@ void main() {
             title: 'Gioca un\'apertura',
             levelId: 2,
             side: side,
-            allowUndo: true,
             startMoves: uci(start),
             line: line == null ? null : uci(line),
           ),

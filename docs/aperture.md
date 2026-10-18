@@ -74,7 +74,7 @@ Una partita contro il computer che parte da un'apertura, in due modi:
 - **dall'explorer**, con l'icona **Gioca questa apertura** (attiva dopo almeno una mossa): le mosse scelte sono già giocate e si prosegue dalla posizione raggiunta. Il colore proposto è quello che deve muovere;
 - **da una linea del repertorio**, con l'icona **Gioca la linea**: si parte dalla posizione iniziale con il colore del repertorio (non modificabile) e l'utente gioca le proprie mosse. Se il computer esce dalla linea compare «Il computer è uscito dalla linea del repertorio.»; se ne esce l'utente, «Sei uscito dalla linea del repertorio.». Ogni segnalazione compare una volta; se con **Annulla** si rientra nella linea, una nuova uscita viene segnalata di nuovo.
 
-Una finestra chiede colore (nell'explorer) e livello del computer. È una `GameChallenge` (vedi [architettura.md](architettura.md)) con le mosse iniziali (`startMoves`) e la linea da seguire (`line`); l'annullamento è consentito, la partita viene salvata in archivio come le altre. Senza motore (Windows e Linux senza Stockfish) le icone non compaiono.
+Una finestra chiede colore (nell'explorer) e livello del computer. È una `GameChallenge` (vedi [architettura.md](architettura.md)) con le mosse iniziali (`startMoves`) e la linea da seguire (`line`); la partita viene salvata in archivio come le altre. Senza motore (Windows e Linux senza Stockfish) le icone non compaiono.
 
 ### Gioca con l'istruttore
 

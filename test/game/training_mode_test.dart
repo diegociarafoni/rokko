@@ -78,11 +78,11 @@ bool _enabled(WidgetTester tester, String id) {
 }
 
 void main() {
-  testWidgets('RF-22 in Sfida niente annullamento né aiuti', (tester) async {
+  testWidgets('RF-22 in Sfida si annulla ma non ci sono aiuti', (tester) async {
     await _open(tester, training: false);
     await tapMove(tester, 'e2e4');
     await tester.pumpAndSettle(const Duration(seconds: 2));
-    expect(_enabled(tester, 'undo'), isFalse);
+    expect(_enabled(tester, 'undo'), isTrue);
     // Senza aiuti il pannello «Altro» non offre né suggerimento né minacce.
     expect(find.byKey(const ValueKey('gameAction-more')), findsNothing);
     expect(find.text('Suggerimento'), findsNothing);

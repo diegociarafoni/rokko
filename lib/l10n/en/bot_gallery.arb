@@ -143,7 +143,7 @@
   "botOptionsCoach": "Coach",
   "botOptionsCoachHint": "Warns you when you make a mistake.",
   "botOptionsTraining": "Training",
-  "botOptionsTrainingHint": "Undo, hints and threats. Doesn't count for Elo or wins; off is Challenge, with no help.",
+  "botOptionsTrainingHint": "Hints and threats. Doesn't count for Elo or wins; off is Challenge, with no help.",
   "botOptionsSummary": "{time} · {variant}",
   "@botOptionsSummary": {
     "placeholders": {

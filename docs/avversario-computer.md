@@ -224,7 +224,7 @@ Contro un bot o il computer si gioca in due modalità, scelte con l'interruttore
 
 | | Allenamento | Sfida |
 | --- | --- | --- |
-| Annullamento | sì | no |
+| Annullamento | sì | sì (la partita conta comunque per Elo e vittorie) |
 | Suggerimento, minacce, allenatore | sì | no |
 | Barra di valutazione | sì, se accesa nelle impostazioni | no |
 | Elo | non conta | conta |

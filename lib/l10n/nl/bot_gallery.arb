@@ -143,7 +143,7 @@
   "botOptionsCoach": "Coach",
   "botOptionsCoachHint": "Waarschuwt je als je een fout maakt.",
   "botOptionsTraining": "Training",
-  "botOptionsTrainingHint": "Zet terugnemen, hints en dreigingen. Telt niet voor Elo en overwinningen; uit is Uitdaging, zonder hulp.",
+  "botOptionsTrainingHint": "Hints en dreigingen. Telt niet voor Elo en overwinningen; uit is Uitdaging, zonder hulp.",
   "botOptionsSummary": "{time} · {variant}",
   "@botOptionsSummary": {
     "placeholders": {

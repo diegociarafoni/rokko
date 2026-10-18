@@ -158,7 +158,7 @@ class GamePage extends StatefulWidget {
   final SavedGame? resume;
 
   /// Partita già impostata da un'altra schermata: parte subito e non si può
-  /// ricominciare né annullare.
+  /// ricominciare.
   final GameChallenge? challenge;
 
   /// Libro e statistiche delle aperture per l'istruttore; di default quelli
@@ -449,8 +449,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   /// Partita con l'istruttore: aiuti accesi e commento sull'apertura.
   bool get _instructor => widget.challenge?.instructor ?? false;
 
-  /// Allenamento (RF-22) contro i bot: aiuti e annullamento, ma niente Elo né
-  /// vittorie. Fuori dall'Allenamento è Sfida. Il profilo bambino si allena
+  /// Allenamento (RF-22) contro i bot: aiuti, ma niente Elo né vittorie. Fuori dall'Allenamento è Sfida. Il profilo bambino si allena
   /// sempre.
   bool _training = false;
 
@@ -466,12 +465,6 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   /// Suggerisci anche nelle sfide che lo concedono (guardiani, custodi).
   bool get _hintAllowed =>
       _helpAllowed || (widget.challenge?.allowHints ?? false);
-
-  /// L'annullamento contro il computer è dell'Allenamento; tra due persone o
-  /// nelle sfide che lo concedono resta com'era.
-  bool get _undoAllowed => _isChallenge
-      ? widget.challenge!.allowUndo
-      : _inTraining || _computerSide == null || !_engineGame;
 
   OpeningBook? _instructorBook;
   OpeningStats? _instructorStats;
@@ -2680,11 +2673,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
             ),
       onNewGame: evaluating || _isChallenge ? null : _newGame,
       onUndo:
-          !evaluating &&
-              (_isChallenge ? widget.challenge!.allowUndo : true) &&
-              ((_undoAllowed && _canUndo) ||
-                  _pendingMove != null ||
-                  _viewPly != null)
+          !evaluating && (_canUndo || _pendingMove != null || _viewPly != null)
           ? _requestUndo
           : null,
       onFlip: () => setState(() => _orientation = _orientation.opposite),

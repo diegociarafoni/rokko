@@ -4,13 +4,12 @@ import '../progress/activity.dart';
 
 /// Partita già impostata contro il computer, lanciata da un'altra schermata
 /// (guardiano del percorso, partita di un torneo): parte subito, senza scelte
-/// e senza poter ricominciare; l'annullamento dipende da [allowUndo].
+/// e senza poter ricominciare. Annulla c'è sempre.
 class GameChallenge {
   const GameChallenge({
     required this.title,
     required this.levelId,
     required this.side,
-    this.allowUndo = false,
     this.allowHints = false,
     this.startMoves = const [],
     this.line,
@@ -25,10 +24,6 @@ class GameChallenge {
 
   /// Colore dell'utente.
   final Side side;
-
-  /// Se l'annullamento è consentito: sì nell'allenamento (guardiano), no nelle
-  /// partite che contano come torneo.
-  final bool allowUndo;
 
   /// Se il pulsante Suggerisci è disponibile (senza allenatore né barra di
   /// valutazione): sì nelle sfide di allenamento, no nei tornei.
