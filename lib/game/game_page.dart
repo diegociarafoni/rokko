@@ -2645,6 +2645,9 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       child: GuideHost(
         screen: 'game',
         steps: gameGuide,
+        // Orologio e computer fermi finché si legge la guida.
+        onStart: _suspend,
+        onEnd: _resume,
         child: _buildScaffold(context),
       ),
     );

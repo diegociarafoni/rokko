@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../l10n/app_localizations.dart';
 
@@ -23,9 +24,17 @@ class GuidePage {
 /// Oscura la schermata, lascia in luce l'elemento del passo e mostra la
 /// spiegazione con «Salta» e «Avanti».
 class GuideOverlay extends StatefulWidget {
-  const GuideOverlay({super.key, required this.steps, required this.onClose});
+  const GuideOverlay({
+    super.key,
+    required this.steps,
+    required this.relayout,
+    required this.onClose,
+  });
 
   final List<GuidePage> steps;
+
+  /// Notifica quando la schermata sotto ha cambiato disposizione.
+  final Listenable relayout;
   final VoidCallback onClose;
 
   @override
@@ -48,18 +57,30 @@ class _GuideOverlayState extends State<GuideOverlay>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _current = widget.steps.firstWhere((s) => s.isUsable);
+    widget.relayout.addListener(_measure);
+    _current =
+        widget.steps.where((s) => s.isUsable).firstOrNull ?? widget.steps.first;
     _enter();
   }
 
   @override
   void dispose() {
+    widget.relayout.removeListener(_measure);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
+  // Il layout nuovo c'è solo dopo il fotogramma: si misura lì.
   @override
-  void didChangeMetrics() => _measure();
+  void didChangeMetrics() =>
+      WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+
+  /// Il tasto indietro chiude la guida e non arriva alla schermata.
+  @override
+  Future<bool> didPopRoute() async {
+    widget.onClose();
+    return true;
+  }
 
   /// Porta l'elemento in vista e ne misura il rettangolo a layout finito.
   void _enter() {
@@ -150,6 +171,7 @@ class _GuideOverlayState extends State<GuideOverlay>
                 ),
                 FilledButton(
                   key: const Key('guide-next'),
+                  autofocus: true,
                   onPressed: _next,
                   child: Text(last ? l10n.guideDone : l10n.guideNext),
                 ),
@@ -193,24 +215,32 @@ class _GuideOverlayState extends State<GuideOverlay>
         child: card,
       ),
     );
-    return BlockSemantics(
-      child: Stack(
-        children: [
-          Positioned.fill(
-            // Un tocco fuori dalla scheda non attraversa verso la schermata.
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {},
-              child: CustomPaint(
-                painter: _ScrimPainter(
-                  hole: target,
-                  color: Colors.black.withValues(alpha: 0.72),
+    // Il focus resta dentro la guida: da tastiera non si raggiunge la schermata.
+    return FocusScope(
+      child: CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.escape): widget.onClose,
+        },
+        child: BlockSemantics(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                // Un tocco fuori dalla scheda non attraversa verso la schermata.
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {},
+                  child: CustomPaint(
+                    painter: _ScrimPainter(
+                      hole: target,
+                      color: Colors.black.withValues(alpha: 0.72),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              cardArea,
+            ],
           ),
-          cardArea,
-        ],
+        ),
       ),
     );
   }

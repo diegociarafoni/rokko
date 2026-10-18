@@ -171,6 +171,8 @@ List<SettingsHit> _index(
       l10n.settingsConfirmMoveDescription,
     ),
     hit(a, access, l10n.settingsLanguage, l10n.settingsLanguageDescription),
+    hit(a, access, l10n.guideOptionEnabled, l10n.guideOptionEnabledDescription),
+    hit(a, access, l10n.guideOptionReplay, l10n.guideOptionReplayDescription),
     hit(
       SettingsSection.kid,
       l10n.kidProfile,

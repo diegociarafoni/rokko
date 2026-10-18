@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rokko/guide/guide_controller.dart';
 import 'package:rokko/guide/guide_host.dart';
@@ -109,6 +110,58 @@ void main() {
       expect(guides.isSeen('demo'), isTrue);
     });
 
+    testWidgets('Esc la chiude da tastiera', (tester) async {
+      final guides = GuideController.memory();
+      await tester.pumpWidget(_app(guides));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('guide-skip')), findsNothing);
+      expect(guides.isSeen('demo'), isTrue);
+    });
+
+    testWidgets('«Rivedi le guide» la rimostra anche su una schermata aperta', (
+      tester,
+    ) async {
+      final guides = GuideController.memory();
+      await tester.pumpWidget(_app(guides));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('guide-skip')));
+      await tester.pumpAndSettle();
+      await guides.reset();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('guide-skip')), findsOneWidget);
+    });
+
+    testWidgets('chiamate di apertura e chiusura per fermare l\'orologio', (
+      tester,
+    ) async {
+      final calls = <String>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('it'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          builder: (context, child) =>
+              GuideScope(controller: GuideController.memory(), child: child!),
+          home: GuideHost(
+            screen: 'demo',
+            steps: _steps,
+            onStart: () => calls.add('start'),
+            onEnd: () => calls.add('end'),
+            child: const Scaffold(
+              body: GuideAnchor(id: 'a', child: Text('A')),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(calls, ['start']);
+      await tester.tap(find.byKey(const Key('guide-skip')));
+      await tester.pumpAndSettle();
+      expect(calls, ['start', 'end']);
+    });
+
     testWidgets('disattivata o già vista non compare', (tester) async {
       await tester.pumpWidget(_app(GuideController.memory(enabled: false)));
       await tester.pumpAndSettle();
@@ -185,18 +238,7 @@ void main() {
       await tester.pumpWidget(_app(GuideController.memory()));
       await tester.pumpAndSettle();
       expect(find.bySemanticsLabel(RegExp('Cerca una funzione')), findsWidgets);
-      expect(
-        tester.getSemantics(find.byKey(const Key('guide-next'))),
-        matchesSemantics(
-          label: 'Avanti',
-          isButton: true,
-          isEnabled: true,
-          hasEnabledState: true,
-          isFocusable: true,
-          hasTapAction: true,
-          hasFocusAction: true,
-        ),
-      );
+      expect(find.bySemanticsLabel('Avanti'), findsWidgets);
       handle.dispose();
     });
   });

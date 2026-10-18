@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderOffstage;
 
 import '../l10n/app_localizations.dart';
 import '../settings/settings.dart';
@@ -57,7 +58,7 @@ class _GuideAnchorState extends State<GuideAnchor> {
   @override
   void initState() {
     super.initState();
-    // Gli elementi che arrivano dopo i dati risvegliano una guida in attesa.
+    // Gli elementi che arrivano dopo i dati rimandano la partenza della guida.
     context.getInheritedWidgetOfExactType<_HostScope>()?.state._consider();
   }
 
@@ -65,6 +66,7 @@ class _GuideAnchorState extends State<GuideAnchor> {
   Widget build(BuildContext context) {
     final host = context.getInheritedWidgetOfExactType<_HostScope>()?.state;
     if (host == null) return widget.child;
+    host._layoutChanged();
     return KeyedSubtree(key: host.keyFor(widget.id), child: widget.child);
   }
 }
@@ -79,6 +81,8 @@ class GuideHost extends StatefulWidget {
     required this.steps,
     required this.child,
     this.enabled = true,
+    this.onStart,
+    this.onEnd,
   });
 
   /// Identificativo salvato quando la guida è stata vista.
@@ -90,15 +94,26 @@ class GuideHost extends StatefulWidget {
   /// mentre è aperta un'altra scheda).
   final bool enabled;
 
+  /// All'apertura e alla chiusura della guida: la partita ferma l'orologio.
+  final VoidCallback? onStart;
+  final VoidCallback? onEnd;
+
   @override
   State<GuideHost> createState() => GuideHostState();
 }
 
 class GuideHostState extends State<GuideHost> {
+  /// Fotogrammi senza elementi nuovi prima di partire: i dati caricati dopo
+  /// l'apertura (progressi, puzzle) hanno il tempo di comparire.
+  static const _quietFrames = 12;
+
   final Map<String, GlobalKey> _keys = {};
+  final ValueNotifier<int> _layout = ValueNotifier(0);
   OverlayEntry? _entry;
   bool _done = false;
-  bool _scheduled = false;
+  bool _waiting = false;
+  bool _layoutScheduled = false;
+  int _quiet = 0;
   Animation<double>? _watched;
 
   GlobalKey keyFor(String id) => _keys.putIfAbsent(id, GlobalKey.new);
@@ -106,6 +121,11 @@ class GuideHostState extends State<GuideHost> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // «Rivedi le guide»: la schermata ancora aperta riparte alla prossima occasione.
+    if (_done &&
+        GuideScope.maybeOf(context)?.shouldShow(widget.screen) == true) {
+      _done = false;
+    }
     _consider();
   }
 
@@ -115,24 +135,55 @@ class GuideHostState extends State<GuideHost> {
     _consider();
   }
 
-  /// Parte quando la schermata è davanti, visibile e finita di animarsi.
-  void _consider() {
-    if (_done || _entry != null || _scheduled || !widget.enabled) return;
+  /// Vera quando la schermata è davanti, visibile e finita di animarsi.
+  bool _ready() {
+    if (_done || _entry != null || !widget.enabled) return false;
     final guide = GuideScope.maybeOf(context);
-    if (guide == null || !guide.shouldShow(widget.screen)) return;
-    if (!TickerMode.valuesOf(context).enabled) return;
+    if (guide == null || !guide.shouldShow(widget.screen)) return false;
+    if (!TickerMode.valuesOf(context).enabled || _offstage()) return false;
     final route = ModalRoute.of(context);
-    if (route != null && !route.isCurrent) return;
+    if (route != null && !route.isCurrent) return false;
     final animation = route?.animation;
     if (animation != null && !animation.isCompleted) {
       _watched?.removeStatusListener(_onRouteAnimation);
       _watched = animation..addStatusListener(_onRouteAnimation);
-      return;
+      return false;
     }
-    _scheduled = true;
+    return true;
+  }
+
+  /// Una scheda della barra fuori scena non mostra la guida.
+  bool _offstage() {
+    var off = false;
+    context.visitAncestorElements((e) {
+      final object = e is RenderObjectElement ? e.renderObject : null;
+      if (object is RenderOffstage && object.offstage) {
+        off = true;
+        return false;
+      }
+      return true;
+    });
+    return off;
+  }
+
+  void _consider() {
+    if (!_ready()) return;
+    _quiet = 0;
+    if (_waiting) return;
+    _waiting = true;
+    _wait();
+  }
+
+  void _wait() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scheduled = false;
-      if (mounted) _show();
+      if (!mounted) return;
+      if (++_quiet < _quietFrames) {
+        WidgetsBinding.instance.scheduleFrame();
+        _wait();
+        return;
+      }
+      _waiting = false;
+      _show();
     });
   }
 
@@ -140,30 +191,44 @@ class GuideHostState extends State<GuideHost> {
     if (status == AnimationStatus.completed) _consider();
   }
 
+  /// Gli elementi hanno cambiato posto: la guida rimisura il rettangolo.
+  void _layoutChanged() {
+    if (_entry == null || _layoutScheduled) return;
+    _layoutScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _layoutScheduled = false;
+      _layout.value++;
+    });
+  }
+
   void _show() {
-    if (_done || _entry != null || !widget.enabled) return;
-    final guide = GuideScope.maybeOf(context);
-    if (guide == null || !guide.shouldShow(widget.screen)) return;
+    if (!_ready()) return;
     final l10n = AppLocalizations.of(context);
     final kid = SettingsScope.maybeOf(context)?.kidMode ?? false;
     final steps = [
       for (final s in widget.steps)
         GuidePage(targetKey: keyFor(s.anchor), text: s.text(l10n, kid)),
     ];
-    // Finché nessun elemento è in vista (dati in arrivo) si aspetta.
+    // Senza nessun elemento in vista non c'è nulla da spiegare.
     if (!steps.any((s) => s.isUsable)) return;
     _entry = OverlayEntry(
-      builder: (context) => GuideOverlay(steps: steps, onClose: _close),
+      builder: (context) =>
+          GuideOverlay(steps: steps, relayout: _layout, onClose: _close),
     );
     Overlay.of(context, rootOverlay: true).insert(_entry!);
+    widget.onStart?.call();
     setState(() {});
   }
 
   void _close() {
-    _entry?.remove();
+    final entry = _entry;
+    if (entry == null) return;
+    entry.remove();
+    entry.dispose();
     _entry = null;
     _done = true;
     unawaited(GuideScope.maybeOf(context)?.markSeen(widget.screen));
+    widget.onEnd?.call();
     if (mounted) setState(() {});
   }
 
@@ -171,19 +236,11 @@ class GuideHostState extends State<GuideHost> {
   void dispose() {
     _watched?.removeStatusListener(_onRouteAnimation);
     _entry?.remove();
+    _entry?.dispose();
+    _layout.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => _HostScope(
-    this,
-    // Il tasto indietro chiude la guida, non la schermata.
-    child: PopScope(
-      canPop: _entry == null,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _close();
-      },
-      child: widget.child,
-    ),
-  );
+  Widget build(BuildContext context) => _HostScope(this, child: widget.child);
 }

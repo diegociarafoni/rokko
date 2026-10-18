@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:intl/intl.dart';
 
 import '../archive/saved_game.dart';
@@ -315,6 +316,9 @@ class _HomePageState extends State<HomePage> {
       ],
     ];
     return ListView(
+      // Tutta la Home costruita: la guida può evidenziare anche le sezioni
+      // fuori dallo schermo.
+      scrollCacheExtent: const ScrollCacheExtent.pixels(4000),
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: children,
