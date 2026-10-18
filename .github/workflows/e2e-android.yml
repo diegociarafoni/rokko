@@ -45,12 +45,12 @@ jobs:
           persist-credentials: false
       - run: command -v ccache || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ccache)
       # Restore e save separati: la cache nativa si salva anche se i test falliscono.
-      - uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .ccache
           key: ccache-e2e-android-${{ hashFiles('pubspec.lock') }}
           restore-keys: ccache-e2e-android-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             /usr/local/lib/android/sdk/ndk/28.2.13676358
@@ -124,7 +124,7 @@ jobs:
         if: '!cancelled()'
         run: ccache -s || true
 
-      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: '!cancelled()'
         with:
           path: .ccache
