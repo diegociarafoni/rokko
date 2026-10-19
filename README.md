@@ -15,7 +15,7 @@ Rokko è un'applicazione di scacchi offline, open source e completamente gratuit
 - orologio con cadenze, modalità zen, archivio delle partite con import ed export PGN, ripresa della partita interrotta, revisione e analisi della partita con varianti e note sulle mosse;
 - puzzle (a tempo, corsa, sopravvivenza, serie, ripasso, sfida tra amici), aperture con esploratore e repertorio, percorso a tappe e a storia con i guardiani, allenatore dei finali e finali perfetti, partite dei grandi maestri, minigiochi, tornei contro i bot;
 - gamification con XP, serie, traguardi e badge, riepilogo settimanale, statistiche e rating locale, profilo bambino;
-- schermata Stile (pezzi, scacchiera, sfondo, suoni), impostazioni a sezioni, tema chiaro o scuro, colori per daltonici, lingua dell'app (italiano, inglese, portoghese del Brasile, francese, spagnolo, tedesco, polacco, indonesiano, russo, olandese e turco);
+- schermata Stile (pezzi, scacchiera, sfondo, suoni), impostazioni a sezioni, guida alla prima apertura delle schermate, tema chiaro o scuro, colori per daltonici, lingua dell'app (italiano, inglese, portoghese del Brasile, francese, spagnolo, tedesco, polacco, indonesiano, russo, olandese e turco);
 - editor di posizione, posizione come immagine, scambio di partite con il QR, scacchiera fisica, backup e ripristino dei dati.
 
 Lo stato di ogni funzione è in [docs/README.md](docs/README.md#stato-del-progetto).
