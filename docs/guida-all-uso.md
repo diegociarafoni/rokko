@@ -6,7 +6,7 @@ Requisito RP-10: la prima volta che si apre una schermata compare una breve guid
 
 - **Passi.** Un passo evidenzia un elemento reale della schermata (sfondo oscurato con un foro attorno all'elemento) e lo spiega in una frase. In basso «Salta» e «Avanti» (all'ultimo passo «Fine»), con il contatore `2/5`. Un elemento che non c'è, per esempio la ricerca nel profilo bambino o il suggerimento contro un amico, salta il passo. Se i dati arrivano dopo l'apertura (la scheda dei puzzle, la Home) i passi si aggiungono man mano.
 - **Una guida per schermata.** `GuideHost` avvolge la schermata e ne elenca i passi (`lib/guide/guide_steps.dart`); `GuideAnchor` segna gli elementi da evidenziare. Partono quando la schermata è davanti, visibile (le schede della barra aspettano di essere aperte) e finita di animarsi, e solo se c'è un `GuideScope` sopra il Navigator (lo mette `lib/main.dart`: nei test e nelle anteprime non compare nulla).
-- **Saltabile.** «Salta», il tasto indietro e l'ultimo «Fine» chiudono la guida e la danno per vista. I tocchi sotto la guida non arrivano alla schermata.
+- **Saltabile.** «Salta», il tasto indietro, Esc da tastiera e l'ultimo «Fine» chiudono la guida e la danno per vista. I tocchi sotto la guida non arrivano alla schermata.
 - **Stato salvato.** `GuideController` (`lib/guide/guide_controller.dart`) salva nelle preferenze locali le schermate già viste (`guideSeen`) e l'interruttore generale (`guideEnabled`). Nulla lascia il telefono.
 - **Impostazioni → Accessibilità.** «Guide alla prima apertura» le attiva o le spegne tutte; «Rivedi le guide» azzera le viste.
 - **Profilo bambino.** Dove serve il passo ha una frase più semplice (Home, scacchiera); gli elementi che il profilo nasconde non compaiono.

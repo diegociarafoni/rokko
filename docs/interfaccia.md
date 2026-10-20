@@ -60,7 +60,7 @@ Per ciascun giocatore una riga mostra le icone dei pezzi avversari catturati, da
 
 **Personaggi e fumetti**: nello spazio libero sopra la scacchiera (almeno 136 dp) lo sfidante, cioè il bot, compare con il suo avatar e il suo nome; quando parla (saluto, scacco, cattura, fine partita e, una volta ogni tanto, una battuta di compagnia scelta dal suo carattere) la frase esce in un fumetto per 8 secondi, o fino a un tocco. Suggerimento, minaccia e «Spiegami perché» sono invece il fumetto dell'allenatore, il gatto astronauta. Il fumetto ha la precedenza sui suggerimenti del primo uso; in zen non c'è. Il widget è riusabile: `SpeechStrip` (`lib/game/speech_bubble.dart`) mostra un personaggio (`Speech.bot`, oppure l'allenatore se nullo) con un `Speech` che ha testo, espressione e un'icona di stato facoltativa; `SpeechBubble` è il solo fumetto, per chi disegna già il personaggio. Pensato anche per puzzle e partita con l'istruttore. Dove manca lo spazio (schermi bassi, orizzontale) i messaggi restano nella fascia in basso come prima.
 
-**Suggerimenti al primo uso**: dopo la prima mossa di una partita, una carta alla volta spiega Suggerisci, la barra con patta e abbandono e il menu ⋮ (con «Avanti» e «Chiudi»; «Chiudi» li spegne per sempre). A fine della prima partita finita contro il motore compare l'invito «Rivedi la partita», una volta sola. Non compaiono in zen, nelle sfide e nel profilo bambino.
+**Suggerimenti al primo uso**: dopo la prima mossa di una partita, una carta alla volta spiega Suggerisci, la barra con patta e abbandono e il menu ⋮ (con «Avanti» e «Chiudi»; «Chiudi» li spegne per sempre). A fine della prima partita finita contro il motore compare l'invito «Rivedi la partita», una volta sola. Non compaiono in zen, nelle sfide e nel profilo bambino. Alla prima apertura la schermata ha anche la guida a passi, con orologio e computer fermi finché è aperta (vedi [guida-all-uso.md](guida-all-uso.md)).
 
 Nel profilo bambino riga di stato, comandi e dialoghi usano frasi brevi, e mancano il menu ⋮ e l'editor di posizione; le nuove partite non offrono varianti né cadenze Bullet e Blitz, mentre una partita già in corso continua com'è (vedi [profilo-bambino.md](profilo-bambino.md)).
 
@@ -119,7 +119,7 @@ La pagina principale è un menu di sezioni: ogni voce ha icona, nome e una riga 
 | Stile | Apre la schermata Stile (`StylePage`, vedi [stile.md](stile.md)): anteprima dal vivo e schede per scacchiera, pezzi, sfondo e suoni |
 | Scacchiera | Suoni, volume, vibrazione, coordinate (anche fuori), evidenzia l'ultima mossa, mosse legali, frecce e cerchi, animazioni, notazione |
 | Partita | Promuovi sempre a donna, ruota a ogni turno, modalità tavolo, «Spiegami perché» |
-| Accessibilità | Aspetto dell'app (sistema, chiaro, scuro), colori per daltonici, modalità zen, conferma della mossa |
+| Accessibilità | Aspetto dell'app (sistema, chiaro, scuro), colori per daltonici, modalità zen, conferma della mossa, guide alla prima apertura e «Rivedi le guide» (vedi [guida-all-uso.md](guida-all-uso.md)) |
 | Profilo bambino | In fondo, sotto un separatore; per uscirne serve la domanda per adulti |
 | Informazioni | Ultima voce: licenza GPL-3.0 o successiva, indirizzo dei sorgenti (si copia, non si apre: l'app non usa la rete), dichiarazione di privacy, licenze di tutte le librerie (`showLicensePage`) e crediti di motore, pezzi e caratteri (`lib/about/`) |
 
@@ -154,6 +154,7 @@ Si aprono dall'icona a forma di ingranaggio nella Home e nella barra del titolo 
 | Barra di valutazione | Accanto alla scacchiera, la barra del vantaggio (la parte chiara è del Bianco) con la valutazione del motore dopo ogni mossa; nel profilo bambino senza cifre. Non c'è nelle sfide senza aiuti, nelle varianti e senza motore; capovolgendo la scacchiera il Bianco resta in basso nella barra (requisito RF-22) | Spenta |
 | Schermo sempre acceso | Durante la partita il telefono non spegne lo schermo; torna normale a partita finita, uscendo dalla schermata e con l'opzione spenta (requisito RM-06, plugin `wakelock_plus`) | Attiva |
 | Ruota a ogni turno | Orienta la scacchiera dal lato di chi deve muovere | Disattiva |
+| Guide alla prima apertura | La prima volta che si apre una schermata compare una breve guida a passi, sempre saltabile; «Rivedi le guide» le fa ricomparire (in Accessibilità, salvata come `guideEnabled`, vedi [guida-all-uso.md](guida-all-uso.md)) | Attiva |
 | Modalità zen | In partita restano solo scacchiera, mosse ed eventuale orologio (sezione sotto); si accende anche dall'icona nella barra della partita | Disattiva |
 | Modalità tavolo | Capovolge i pezzi del giocatore in alto, per giocare uno di fronte all'altro con il telefono sul tavolo | Disattiva |
 | Colori per daltonici | Sostituisce le evidenziazioni (ultima mossa, casa selezionata, mosse legali, premosse) con colori della palette Okabe-Ito, leggibili con deuteranopia, protanopia e tritanopia; i colori delle case restano quelli del tema. Indizi dei problemi e frecce del ripasso passano dal verde al blu, gli esiti delle coordinate da verde e rosso a blu e arancio (requisito RNF-07) | Disattiva |
